@@ -15,6 +15,15 @@
     </header>
 
     <main>
+      <div class="lesson-list">
+        <div class="lesson" v-for="lesson in lessons" v-bind:key="lesson._id">
+          <img v-bind:src="imageAddress(lesson)" v-bind:alt="lesson.topic">
+          <h2>{{ lesson.topic }}</h2>
+          <p><i class="fa fa-map-marker" aria-hidden="true"></i> Location: {{ lesson.location }}</p>
+          <p><i class="fa fa-gbp" aria-hidden="true"></i> Price: £{{ lesson.price }}</p>
+          <p><i class="fa fa-users" aria-hidden="true"></i> Spaces: {{ lesson.space }}</p>
+        </div>
+      </div>
     </main>
   </div>
 
