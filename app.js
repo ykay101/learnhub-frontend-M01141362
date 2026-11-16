@@ -8,12 +8,27 @@ const webstore = createApp({
   data() {
     return {
       sitename: "LearnHub",
-      lessons: []
+      lessons: [],
+      sortAttribute: "topic",
+      sortOrder: "ascending"
     };
   },
 
   created() {
     this.getLessons();
+  },
+
+  computed: {
+    sortedLessons() {
+      let attribute = this.sortAttribute;
+      let direction = this.sortOrder == "ascending" ? 1 : -1;
+      function compare(a, b) {
+        if (a[attribute] > b[attribute]) return 1 * direction;
+        if (a[attribute] < b[attribute]) return -1 * direction;
+        return 0;
+      }
+      return this.lessons.slice().sort(compare);
+    }
   },
 
   methods: {

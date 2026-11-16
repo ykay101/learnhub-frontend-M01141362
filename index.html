@@ -15,8 +15,27 @@
     </header>
 
     <main>
+      <div class="controls">
+        <div class="control">
+          <label><i class="fa fa-sort" aria-hidden="true"></i> Sort by</label>
+          <select v-model="sortAttribute">
+            <option value="topic">Subject</option>
+            <option value="location">Location</option>
+            <option value="price">Price</option>
+            <option value="space">Spaces</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>Order</label>
+          <div class="radios">
+            <label><input type="radio" v-model="sortOrder" value="ascending"> Ascending</label>
+            <label><input type="radio" v-model="sortOrder" value="descending"> Descending</label>
+          </div>
+        </div>
+      </div>
+
       <div class="lesson-list">
-        <div class="lesson" v-for="lesson in lessons" v-bind:key="lesson._id">
+        <div class="lesson" v-for="lesson in sortedLessons" v-bind:key="lesson._id">
           <img v-bind:src="imageAddress(lesson)" v-bind:alt="lesson.topic">
           <h2>{{ lesson.topic }}</h2>
           <p><i class="fa fa-map-marker" aria-hidden="true"></i> Location: {{ lesson.location }}</p>
