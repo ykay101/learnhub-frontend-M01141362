@@ -12,6 +12,7 @@
   <div id="app">
     <header>
       <h1><i class="fa fa-graduation-cap" aria-hidden="true"></i> {{ sitename }}</h1>
+      <span><i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart ({{ cart.length }})</span>
     </header>
 
     <main>
@@ -41,6 +42,9 @@
           <p><i class="fa fa-map-marker" aria-hidden="true"></i> Location: {{ lesson.location }}</p>
           <p><i class="fa fa-gbp" aria-hidden="true"></i> Price: £{{ lesson.price }}</p>
           <p><i class="fa fa-users" aria-hidden="true"></i> Spaces: {{ lesson.space }}</p>
+          <button v-on:click="addToCart(lesson)" v-bind:disabled="lesson.space == 0">
+            <i class="fa fa-cart-plus" aria-hidden="true"></i> Add to Cart
+          </button>
         </div>
       </div>
     </main>

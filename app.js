@@ -10,7 +10,8 @@ const webstore = createApp({
       sitename: "LearnHub",
       lessons: [],
       sortAttribute: "topic",
-      sortOrder: "ascending"
+      sortOrder: "ascending",
+      cart: []
     };
   },
 
@@ -34,6 +35,13 @@ const webstore = createApp({
   methods: {
     imageAddress(lesson) {
       return SERVER_URL + "/images/" + lesson.image;
+    },
+
+    addToCart(lesson) {
+      if (lesson.space > 0) {
+        this.cart.push(lesson);
+        lesson.space = lesson.space - 1;
+      }
     },
 
     async getLessons() {
