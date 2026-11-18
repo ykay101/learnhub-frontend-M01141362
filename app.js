@@ -55,6 +55,12 @@ const webstore = createApp({
       }
     },
 
+    removeFromCart(index) {
+      let lesson = this.cart[index];
+      lesson.space = lesson.space + 1;
+      this.cart.splice(index, 1);
+    },
+
     toggleCart() {
       this.showLessons = !this.showLessons;
     },
