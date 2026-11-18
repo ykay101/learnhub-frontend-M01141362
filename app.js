@@ -8,6 +8,7 @@ const webstore = createApp({
   data() {
     return {
       sitename: "LearnHub",
+      showLessons: true,
       lessons: [],
       sortAttribute: "topic",
       sortOrder: "ascending",
@@ -29,6 +30,16 @@ const webstore = createApp({
         return 0;
       }
       return this.lessons.slice().sort(compare);
+    },
+    cartTotal() {
+      let total = 0;
+      for (let lesson of this.cart) {
+        total = total + lesson.price;
+      }
+      return total;
+    },
+    canOpenCart() {
+      return this.cart.length > 0 || !this.showLessons;
     }
   },
 
@@ -42,6 +53,10 @@ const webstore = createApp({
         this.cart.push(lesson);
         lesson.space = lesson.space - 1;
       }
+    },
+
+    toggleCart() {
+      this.showLessons = !this.showLessons;
     },
 
     async getLessons() {
