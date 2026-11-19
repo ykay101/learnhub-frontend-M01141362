@@ -12,7 +12,12 @@ const webstore = createApp({
       lessons: [],
       sortAttribute: "topic",
       sortOrder: "ascending",
-      cart: []
+      cart: [],
+      order: {
+        name: "",
+        phone: ""
+      },
+      orderMessage: ""
     };
   },
 
@@ -40,6 +45,15 @@ const webstore = createApp({
     },
     canOpenCart() {
       return this.cart.length > 0 || !this.showLessons;
+    },
+    validName() {
+      return /^[A-Za-z ]+$/.test(this.order.name);
+    },
+    validPhone() {
+      return /^[0-9]+$/.test(this.order.phone);
+    },
+    canCheckout() {
+      return this.validName && this.validPhone && this.cart.length > 0;
     }
   },
 
@@ -63,6 +77,14 @@ const webstore = createApp({
 
     toggleCart() {
       this.showLessons = !this.showLessons;
+      this.orderMessage = "";
+    },
+
+    checkout() {
+      this.orderMessage = "Thank you " + this.order.name + ", your order has been submitted!";
+      this.cart = [];
+      this.order.name = "";
+      this.order.phone = "";
     },
 
     async getLessons() {

@@ -75,6 +75,24 @@
         </div>
 
         <p v-if="cart.length > 0"><strong>Total: £{{ cartTotal }}</strong></p>
+
+        <div class="checkout">
+          <h2>Checkout</h2>
+          <p>
+            <label>Name</label>
+            <input type="text" v-model="order.name" placeholder="Letters only">
+            <span class="error" v-if="order.name != '' && !validName">Name must contain letters only.</span>
+          </p>
+          <p>
+            <label>Phone</label>
+            <input type="text" v-model="order.phone" placeholder="Numbers only">
+            <span class="error" v-if="order.phone != '' && !validPhone">Phone must contain numbers only.</span>
+          </p>
+          <button v-on:click="checkout" v-bind:disabled="!canCheckout">
+            <i class="fa fa-check" aria-hidden="true"></i> Checkout
+          </button>
+          <p class="success" v-if="orderMessage">{{ orderMessage }}</p>
+        </div>
       </div>
     </main>
   </div>
