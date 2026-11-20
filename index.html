@@ -25,6 +25,11 @@
 
         <div class="controls">
           <div class="control">
+            <label><i class="fa fa-search" aria-hidden="true"></i> Search</label>
+            <input type="text" v-model="searchText" placeholder="Subject, location, price or spaces">
+          </div>
+
+          <div class="control">
             <label><i class="fa fa-sort" aria-hidden="true"></i> Sort by</label>
             <select v-model="sortAttribute">
               <option value="topic">Subject</option>

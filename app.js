@@ -10,6 +10,8 @@ const webstore = createApp({
       sitename: "LearnHub",
       showLessons: true,
       lessons: [],
+      visibleIDs: null,
+      searchText: "",
       sortAttribute: "topic",
       sortOrder: "ascending",
       cart: [],
@@ -25,8 +27,16 @@ const webstore = createApp({
     this.getLessons();
   },
 
+  watch: {
+    searchText: "searchLessons"
+  },
+
   computed: {
     sortedLessons() {
+      let list = this.lessons;
+      if (this.visibleIDs != null) {
+        list = list.filter(lesson => this.visibleIDs.includes(lesson._id));
+      }
       let attribute = this.sortAttribute;
       let direction = this.sortOrder == "ascending" ? 1 : -1;
       function compare(a, b) {
@@ -34,7 +44,7 @@ const webstore = createApp({
         if (a[attribute] < b[attribute]) return -1 * direction;
         return 0;
       }
-      return this.lessons.slice().sort(compare);
+      return list.slice().sort(compare);
     },
     cartTotal() {
       let total = 0;
@@ -124,6 +134,17 @@ const webstore = createApp({
     async getLessons() {
       let response = await fetch(SERVER_URL + "/lessons");
       this.lessons = await response.json();
+    },
+
+    async searchLessons() {
+      if (this.searchText == "") {
+        this.visibleIDs = null;
+        return;
+      }
+      let url = SERVER_URL + "/search?q=" + encodeURIComponent(this.searchText);
+      let response = await fetch(url);
+      let results = await response.json();
+      this.visibleIDs = results.map(lesson => lesson._id);
     }
   }
 });
