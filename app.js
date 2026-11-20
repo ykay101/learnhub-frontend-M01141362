@@ -80,7 +80,41 @@ const webstore = createApp({
       this.orderMessage = "";
     },
 
-    checkout() {
+    async checkout() {
+      let lessonIDs = [];
+      let spaces = [];
+      for (let lesson of this.cart) {
+        let index = lessonIDs.indexOf(lesson._id);
+        if (index == -1) {
+          lessonIDs.push(lesson._id);
+          spaces.push(1);
+        } else {
+          spaces[index] = spaces[index] + 1;
+        }
+      }
+
+      let newOrder = {
+        name: this.order.name,
+        phone: this.order.phone,
+        lessonIDs: lessonIDs,
+        spaces: spaces
+      };
+
+      await fetch(SERVER_URL + "/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newOrder)
+      });
+
+      for (let id of lessonIDs) {
+        let lesson = this.lessons.find(l => l._id == id);
+        await fetch(SERVER_URL + "/lessons/" + id, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ space: lesson.space })
+        });
+      }
+
       this.orderMessage = "Thank you " + this.order.name + ", your order has been submitted!";
       this.cart = [];
       this.order.name = "";
