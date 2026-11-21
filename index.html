@@ -30,6 +30,16 @@
           </div>
 
           <div class="control">
+            <label><i class="fa fa-user" aria-hidden="true"></i> Teacher</label>
+            <select v-model="selectedTeacher">
+              <option value="">All teachers</option>
+              <option v-for="teacher in teachers" v-bind:value="teacher._id">
+                {{ teacher.firstName }} {{ teacher.lastName }}
+              </option>
+            </select>
+          </div>
+
+          <div class="control">
             <label><i class="fa fa-sort" aria-hidden="true"></i> Sort by</label>
             <select v-model="sortAttribute">
               <option value="topic">Subject</option>

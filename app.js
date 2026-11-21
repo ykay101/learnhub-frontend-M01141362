@@ -11,6 +11,8 @@ const webstore = createApp({
       showLessons: true,
       lessons: [],
       visibleIDs: null,
+      teachers: [],
+      selectedTeacher: "",
       searchText: "",
       sortAttribute: "topic",
       sortOrder: "ascending",
@@ -25,10 +27,12 @@ const webstore = createApp({
 
   created() {
     this.getLessons();
+    this.getTeachers();
   },
 
   watch: {
-    searchText: "searchLessons"
+    searchText: "searchLessons",
+    selectedTeacher: "filterByTeacher"
   },
 
   computed: {
@@ -70,6 +74,40 @@ const webstore = createApp({
   methods: {
     imageAddress(lesson) {
       return SERVER_URL + "/images/" + lesson.image;
+    },
+
+    async getLessons() {
+      let response = await fetch(SERVER_URL + "/lessons");
+      this.lessons = await response.json();
+    },
+
+    async getTeachers() {
+      let response = await fetch(SERVER_URL + "/teachers");
+      this.teachers = await response.json();
+    },
+
+    async searchLessons() {
+      if (this.searchText == "") {
+        if (this.selectedTeacher == "") this.visibleIDs = null;
+        return;
+      }
+      this.selectedTeacher = "";
+      let url = SERVER_URL + "/search?q=" + encodeURIComponent(this.searchText);
+      let response = await fetch(url);
+      let results = await response.json();
+      this.visibleIDs = results.map(lesson => lesson._id);
+    },
+
+    async filterByTeacher() {
+      if (this.selectedTeacher == "") {
+        if (this.searchText == "") this.visibleIDs = null;
+        return;
+      }
+      this.searchText = "";
+      let url = SERVER_URL + "/teachers/" + this.selectedTeacher + "/lessons";
+      let response = await fetch(url);
+      let results = await response.json();
+      this.visibleIDs = results.map(lesson => lesson._id);
     },
 
     addToCart(lesson) {
@@ -129,22 +167,6 @@ const webstore = createApp({
       this.cart = [];
       this.order.name = "";
       this.order.phone = "";
-    },
-
-    async getLessons() {
-      let response = await fetch(SERVER_URL + "/lessons");
-      this.lessons = await response.json();
-    },
-
-    async searchLessons() {
-      if (this.searchText == "") {
-        this.visibleIDs = null;
-        return;
-      }
-      let url = SERVER_URL + "/search?q=" + encodeURIComponent(this.searchText);
-      let response = await fetch(url);
-      let results = await response.json();
-      this.visibleIDs = results.map(lesson => lesson._id);
     }
   }
 });
