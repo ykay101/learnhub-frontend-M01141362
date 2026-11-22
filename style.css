@@ -1,101 +1,25 @@
-* { box-sizing: border-box; }
-
 body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
   background: #f4f6f8;
-  color: #222;
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 24px;
-  background: #2c3e50;
-  color: #fff;
+.hero {
+  background: linear-gradient(135deg, #2c3e50, #2980b9);
 }
 
-header h1 { margin: 0; font-size: 1.6em; }
-
-main { max-width: 1100px; margin: 0 auto; padding: 20px; }
-
-button {
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  background: #27ae60;
-  color: #fff;
-  font-size: 0.95em;
-  cursor: pointer;
+.lesson-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-button:disabled { background: #b5b5b5; cursor: not-allowed; }
-
-.cart-button { background: #f39c12; }
-
-input[type="text"], select {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 0.95em;
+.lesson-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.12) !important;
 }
 
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 20px;
-  padding: 16px;
-  background: #fff;
-  border-radius: 8px;
+.card-img-top {
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
 }
 
-.control { display: flex; flex-direction: column; gap: 6px; }
-.control > label { font-weight: bold; font-size: 0.9em; }
-.radios { display: flex; gap: 12px; padding-top: 6px; }
-
-.lesson-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 18px;
+.cart-img {
+  width: 72px;
 }
-
-.lesson {
-  background: #fff;
-  border-radius: 8px;
-  padding: 14px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-}
-
-.lesson img { width: 100%; border-radius: 6px; }
-.lesson h2 { margin: 10px 0 6px; }
-.lesson p { margin: 4px 0; }
-.lesson .fa { width: 16px; color: #2c3e50; }
-.lesson button { margin-top: 10px; width: 100%; }
-
-.cart-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: #fff;
-  border-radius: 8px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-.cart-item img { width: 90px; border-radius: 6px; }
-.cart-item div { flex: 1; }
-.cart-item button { background: #c0392b; }
-
-.checkout {
-  background: #fff;
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 20px;
-}
-
-.checkout label { display: inline-block; width: 70px; font-weight: bold; }
-.error { color: #c0392b; margin-left: 10px; font-size: 0.9em; }
-.success { color: #27ae60; font-weight: bold; }
-.empty { color: #777; }
