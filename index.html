@@ -151,9 +151,13 @@
                   <div class="invalid-feedback">Phone must contain numbers only.</div>
                 </div>
                 <button class="btn btn-success w-100" v-on:click="checkout" v-bind:disabled="!canCheckout">
-                  <i class="fa fa-check" aria-hidden="true"></i> Checkout
+                  <span v-if="submitting">
+                    <span class="spinner-border spinner-border-sm me-1" role="status"></span> Placing order...
+                  </span>
+                  <span v-else><i class="fa fa-check" aria-hidden="true"></i> Checkout</span>
                 </button>
                 <div class="alert alert-success mt-3 mb-0" v-if="orderMessage">{{ orderMessage }}</div>
+                <div class="alert alert-danger mt-3 mb-0" v-if="orderError">{{ orderError }}</div>
               </div>
             </div>
           </div>
@@ -162,6 +166,6 @@
     </main>
   </div>
 
-  <script type="module" src="app.js?v=3"></script>
+  <script type="module" src="app.js?v=4"></script>
 </body>
 </html>

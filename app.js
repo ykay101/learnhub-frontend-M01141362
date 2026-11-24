@@ -23,7 +23,9 @@ const webstore = createApp({
         name: "",
         phone: ""
       },
-      orderMessage: ""
+      orderMessage: "",
+      orderError: "",
+      submitting: false
     };
   },
 
@@ -81,7 +83,7 @@ const webstore = createApp({
       return /^[0-9]+$/.test(this.order.phone);
     },
     canCheckout() {
-      return this.validName && this.validPhone && this.cart.length > 0;
+      return this.validName && this.validPhone && this.cart.length > 0 && !this.submitting;
     }
   },
 
@@ -148,6 +150,7 @@ const webstore = createApp({
     toggleCart() {
       this.showLessons = !this.showLessons;
       this.orderMessage = "";
+      this.orderError = "";
     },
 
     async checkout() {
@@ -170,25 +173,35 @@ const webstore = createApp({
         spaces: spaces
       };
 
-      await fetch(SERVER_URL + "/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newOrder)
-      });
-
-      for (let id of lessonIDs) {
-        let lesson = this.lessons.find(l => l._id == id);
-        await fetch(SERVER_URL + "/lessons/" + id, {
-          method: "PUT",
+      this.submitting = true;
+      this.orderMessage = "";
+      this.orderError = "";
+      try {
+        let response = await fetch(SERVER_URL + "/orders", {
+          method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ space: lesson.space })
+          body: JSON.stringify(newOrder)
         });
-      }
+        if (!response.ok) throw new Error("Order not saved");
 
-      this.orderMessage = "Thank you " + this.order.name + ", your order has been submitted!";
-      this.cart = [];
-      this.order.name = "";
-      this.order.phone = "";
+        for (let id of lessonIDs) {
+          let lesson = this.lessons.find(l => l._id == id);
+          await fetch(SERVER_URL + "/lessons/" + id, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ space: lesson.space })
+          });
+        }
+
+        this.orderMessage = "Thank you " + this.order.name + ", your order has been submitted!";
+        this.cart = [];
+        this.order.name = "";
+        this.order.phone = "";
+      } catch (error) {
+        this.orderError = "Sorry, your order could not be submitted. Please try again.";
+      } finally {
+        this.submitting = false;
+      }
     }
   }
 });
