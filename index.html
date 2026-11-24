@@ -38,7 +38,9 @@
           <div class="card-body">
             <div class="row g-3 align-items-end">
               <div class="col-md-4">
-                <label class="form-label fw-semibold"><i class="fa fa-search" aria-hidden="true"></i> Search</label>
+                <label class="form-label fw-semibold"><i class="fa fa-search" aria-hidden="true"></i> Search
+                  <span v-if="filtering" class="spinner-border spinner-border-sm ms-1 text-secondary" role="status"></span>
+                </label>
                 <input type="text" class="form-control" v-model="searchText" placeholder="Subject, location, price or spaces">
               </div>
               <div class="col-md-3">
@@ -79,7 +81,7 @@
           <p class="mb-0">Loading lessons...</p>
         </div>
         <p v-else-if="loadError" class="text-danger">Could not load lessons. Please refresh the page.</p>
-        <p v-else-if="sortedLessons.length == 0" class="text-muted">No lessons found.</p>
+        <p v-else-if="sortedLessons.length == 0 && !filtering" class="text-muted">No lessons found.</p>
 
         <div class="row g-4">
           <div class="col-sm-6 col-lg-4 col-xl-3" v-for="lesson in sortedLessons" v-bind:key="lesson._id">

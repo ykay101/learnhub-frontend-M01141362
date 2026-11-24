@@ -16,6 +16,9 @@ const webstore = createApp({
       teachers: [],
       selectedTeacher: "",
       searchText: "",
+      searchTimer: null,
+      filtering: false,
+      requestNumber: 0,
       sortAttribute: "topic",
       sortOrder: "ascending",
       cart: [],
@@ -35,7 +38,7 @@ const webstore = createApp({
   },
 
   watch: {
-    searchText: "searchLessons",
+    searchText: "onSearchInput",
     selectedTeacher: "filterByTeacher"
   },
 
@@ -113,28 +116,55 @@ const webstore = createApp({
       return teacher ? teacher.firstName + " " + teacher.lastName : "";
     },
 
+    onSearchInput() {
+      clearTimeout(this.searchTimer);
+      if (this.searchText == "") {
+        this.searchLessons();
+        return;
+      }
+      this.filtering = true;
+      this.searchTimer = setTimeout(this.searchLessons, 300);
+    },
+
     async searchLessons() {
       if (this.searchText == "") {
-        if (this.selectedTeacher == "") this.visibleIDs = null;
+        if (this.selectedTeacher == "") {
+          this.requestNumber++;
+          this.visibleIDs = null;
+          this.filtering = false;
+        }
         return;
       }
       this.selectedTeacher = "";
+      let thisRequest = ++this.requestNumber;
+      this.filtering = true;
       let url = SERVER_URL + "/search?q=" + encodeURIComponent(this.searchText);
       let response = await fetch(url);
       let results = await response.json();
+      if (thisRequest != this.requestNumber) return;
       this.visibleIDs = results.map(lesson => lesson._id);
+      this.filtering = false;
     },
 
     async filterByTeacher() {
       if (this.selectedTeacher == "") {
-        if (this.searchText == "") this.visibleIDs = null;
+        if (this.searchText == "") {
+          this.requestNumber++;
+          this.visibleIDs = null;
+          this.filtering = false;
+        }
         return;
       }
+      clearTimeout(this.searchTimer);
       this.searchText = "";
+      let thisRequest = ++this.requestNumber;
+      this.filtering = true;
       let url = SERVER_URL + "/teachers/" + this.selectedTeacher + "/lessons";
       let response = await fetch(url);
       let results = await response.json();
+      if (thisRequest != this.requestNumber) return;
       this.visibleIDs = results.map(lesson => lesson._id);
+      this.filtering = false;
     },
 
     addToCart(lesson) {
