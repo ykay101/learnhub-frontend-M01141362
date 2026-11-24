@@ -92,7 +92,7 @@
                   <i class="fa fa-users fa-fw text-secondary" aria-hidden="true"></i> Spaces:
                   <span v-bind:class="lesson.space == 0 ? 'badge bg-danger' : 'badge bg-success'">{{ lesson.space }}</span>
                 </p>
-                <button class="btn btn-primary mt-auto" v-on:click="addToCart(lesson)" v-bind:disabled="lesson.space == 0">
+                <button class="btn btn-gradient mt-auto" v-on:click="addToCart(lesson)" v-bind:disabled="lesson.space == 0">
                   <i class="fa fa-cart-plus" aria-hidden="true"></i> Add to Cart
                 </button>
               </div>

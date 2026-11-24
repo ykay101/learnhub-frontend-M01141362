@@ -6,6 +6,22 @@ body {
   background: linear-gradient(135deg, #2c3e50, #2980b9);
 }
 
+.btn-gradient {
+  background: linear-gradient(135deg, #2c3e50, #2980b9);
+  color: #fff;
+  border: none;
+}
+
+.btn-gradient:hover {
+  background: linear-gradient(135deg, #34495e, #3498db);
+  color: #fff;
+}
+
+.btn-gradient:disabled {
+  background: #adb5bd;
+  color: #fff;
+}
+
 .lesson-card {
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
