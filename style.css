@@ -43,3 +43,13 @@ body {
 .cart-img {
   width: 72px;
 }
+
+.qty {
+  min-width: 24px;
+  text-align: center;
+}
+
+.line-total {
+  min-width: 60px;
+  text-align: right;
+}

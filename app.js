@@ -52,6 +52,18 @@ const webstore = createApp({
       }
       return list.slice().sort(compare);
     },
+    cartItems() {
+      let items = [];
+      for (let lesson of this.cart) {
+        let item = items.find(i => i.lesson._id == lesson._id);
+        if (item) {
+          item.quantity = item.quantity + 1;
+        } else {
+          items.push({ lesson: lesson, quantity: 1 });
+        }
+      }
+      return items;
+    },
     cartTotal() {
       let total = 0;
       for (let lesson of this.cart) {
@@ -125,10 +137,12 @@ const webstore = createApp({
       }
     },
 
-    removeFromCart(index) {
-      let lesson = this.cart[index];
-      lesson.space = lesson.space + 1;
-      this.cart.splice(index, 1);
+    removeFromCart(lesson) {
+      let index = this.cart.indexOf(lesson);
+      if (index != -1) {
+        this.cart.splice(index, 1);
+        lesson.space = lesson.space + 1;
+      }
     },
 
     toggleCart() {
