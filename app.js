@@ -108,6 +108,11 @@ const webstore = createApp({
       this.teachers = await response.json();
     },
 
+    teacherName(lesson) {
+      let teacher = this.teachers.find(t => t.lessonIDs.includes(lesson._id));
+      return teacher ? teacher.firstName + " " + teacher.lastName : "";
+    },
+
     async searchLessons() {
       if (this.searchText == "") {
         if (this.selectedTeacher == "") this.visibleIDs = null;

@@ -89,6 +89,7 @@
                 <h2 class="h5 card-title"><span class="text-muted small">Subject:</span> {{ lesson.topic }}</h2>
                 <p class="mb-1"><i class="fa fa-map-marker fa-fw text-secondary" aria-hidden="true"></i> Location: {{ lesson.location }}</p>
                 <p class="mb-1"><i class="fa fa-gbp fa-fw text-secondary" aria-hidden="true"></i> Price: £{{ lesson.price }}</p>
+                <p class="mb-1" v-if="teacherName(lesson)"><i class="fa fa-user fa-fw text-secondary" aria-hidden="true"></i> Teacher: {{ teacherName(lesson) }}</p>
                 <p class="mb-3">
                   <i class="fa fa-users fa-fw text-secondary" aria-hidden="true"></i> Spaces:
                   <span v-bind:class="lesson.space == 0 ? 'badge bg-danger' : 'badge bg-success'">{{ lesson.space }}</span>
@@ -166,6 +167,6 @@
     </main>
   </div>
 
-  <script type="module" src="app.js?v=4"></script>
+  <script type="module" src="app.js?v=5"></script>
 </body>
 </html>
