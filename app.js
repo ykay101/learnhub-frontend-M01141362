@@ -11,6 +11,7 @@ const webstore = createApp({
       showLessons: true,
       lessons: [],
       loading: true,
+      loadError: false,
       visibleIDs: null,
       teachers: [],
       selectedTeacher: "",
@@ -81,6 +82,8 @@ const webstore = createApp({
       try {
         let response = await fetch(SERVER_URL + "/lessons");
         this.lessons = await response.json();
+      } catch (error) {
+        this.loadError = true;
       } finally {
         this.loading = false;
       }
