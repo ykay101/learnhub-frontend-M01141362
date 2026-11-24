@@ -74,7 +74,11 @@
           </div>
         </div>
 
-        <p v-if="sortedLessons.length == 0" class="text-muted">No lessons found.</p>
+        <div v-if="loading" class="text-center text-muted py-5">
+          <div class="spinner-border mb-3" style="color: #2980b9;" role="status"></div>
+          <p class="mb-0">Loading lessons...</p>
+        </div>
+        <p v-else-if="sortedLessons.length == 0" class="text-muted">No lessons found.</p>
 
         <div class="row g-4">
           <div class="col-sm-6 col-lg-4 col-xl-3" v-for="lesson in sortedLessons" v-bind:key="lesson._id">

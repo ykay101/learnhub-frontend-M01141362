@@ -18,7 +18,7 @@ CST3144 Full Stack Development coursework. Vue.js app for booking after school l
 
 ## Running locally
 
-Start the back end first (it runs on port 3000), then serve this folder, e.g. with VS Code Live Preview or:
+Start the back end first (it runs on port 5000), then serve this folder, e.g. with VS Code Live Preview or:
 
 ```
 python3 -m http.server 5500
