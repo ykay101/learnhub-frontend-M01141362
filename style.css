@@ -7,13 +7,13 @@ body {
 }
 
 .btn-gradient {
-  background: linear-gradient(135deg, #2c3e50, #2980b9);
+  background: #2A4E6A;
   color: #fff;
   border: none;
 }
 
 .btn-gradient:hover {
-  background: linear-gradient(135deg, #34495e, #3498db);
+  background: #36618a;
   color: #fff;
 }
 
