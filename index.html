@@ -140,13 +140,13 @@
                 <h2 class="h4 mb-3">Checkout</h2>
                 <div class="mb-3">
                   <label class="form-label">Name</label>
-                  <input type="text" class="form-control" v-model="order.name" placeholder="Letters only"
+                  <input type="text" class="form-control" v-model="order.name" placeholder="Enter your full name"
                     v-bind:class="{ 'is-invalid': order.name != '' && !validName }">
                   <div class="invalid-feedback">Name must contain letters only.</div>
                 </div>
                 <div class="mb-3">
                   <label class="form-label">Phone</label>
-                  <input type="text" class="form-control" v-model="order.phone" placeholder="Numbers only"
+                  <input type="text" class="form-control" v-model="order.phone" placeholder="Enter your phone number"
                     v-bind:class="{ 'is-invalid': order.phone != '' && !validPhone }">
                   <div class="invalid-feedback">Phone must contain numbers only.</div>
                 </div>
