@@ -203,6 +203,18 @@ const app = createApp({
 
     showLessonsPage() {
       this.view = "lessons";
+      this.scrollToView();
+    },
+
+    scrollToView() {
+      setTimeout(() => {
+        let lessons = document.getElementById("lessons");
+        if (this.view == "lessons" && lessons) {
+          lessons.scrollIntoView();
+        } else {
+          window.scrollTo(0, 0);
+        }
+      }, 260);
     },
 
     async checkout() {
@@ -252,6 +264,7 @@ const app = createApp({
 
     toggleCart() {
       this.view = this.view == "cart" ? "lessons" : "cart";
+      this.scrollToView();
       this.orderMessage = "";
       this.orderError = "";
     }

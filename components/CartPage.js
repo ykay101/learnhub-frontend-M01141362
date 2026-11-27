@@ -8,7 +8,7 @@ export default {
   },
   template: `
     <div class="grid gap-6 lg:grid-cols-[1fr_380px]">
-      <div>
+      <div class="min-w-0">
         <h2 class="font-display text-3xl font-semibold">Your cart</h2>
         <p class="mt-1 text-muted">Check your lessons, then fill in your details to book.</p>
 
@@ -27,27 +27,31 @@ export default {
         </div>
 
         <transition-group tag="ul" name="card" class="mt-6 space-y-3">
-          <li v-for="item in items" :key="item.lesson._id" data-test="cart-row" class="flex items-center gap-4 rounded-2xl border border-line bg-white p-3 shadow-sm">
+          <li v-for="item in items" :key="item.lesson._id" data-test="cart-row" class="flex flex-col gap-3 rounded-2xl border border-line bg-white p-3 shadow-sm sm:flex-row sm:items-center sm:gap-4">
+            <div class="flex min-w-0 flex-1 items-center gap-4">
             <img :src="imageURL(item.lesson.image)" :alt="item.lesson.topic" class="h-16 w-20 shrink-0 rounded-xl object-cover">
             <div class="min-w-0 flex-1">
               <p class="font-display text-lg font-semibold">{{ item.lesson.topic }}</p>
-              <p class="truncate text-sm text-muted">
+              <p class="text-sm text-muted sm:truncate">
                 <i class="fa fa-map-marker mr-1"></i>{{ item.lesson.location }}
                 <span class="mx-1">·</span>{{ item.lesson.day }} {{ item.lesson.time }}
                 <span class="mx-1">·</span>£{{ item.lesson.price }} each
               </p>
             </div>
+            </div>
+            <div class="flex items-center justify-between gap-4 sm:justify-end">
             <div class="flex items-center gap-1 rounded-full border border-line bg-surface p-1">
               <button data-test="minus" class="grid h-8 w-8 place-items-center rounded-full hover:bg-white" aria-label="Remove one" @click="$emit('remove', item.lesson)"><i class="fa fa-minus text-xs"></i></button>
               <span data-test="qty" class="w-6 text-center font-semibold">{{ item.quantity }}</span>
               <button data-test="plus" class="grid h-8 w-8 place-items-center rounded-full hover:bg-white disabled:opacity-30" aria-label="Add one" :disabled="item.lesson.space == 0" @click="$emit('add', item.lesson)"><i class="fa fa-plus text-xs"></i></button>
             </div>
             <p class="w-16 text-right font-display text-lg font-semibold">£{{ item.lesson.price * item.quantity }}</p>
+            </div>
           </li>
         </transition-group>
       </div>
 
-      <aside class="h-fit rounded-2xl border border-line bg-white p-5 shadow-sm lg:sticky lg:top-20">
+      <aside class="h-fit min-w-0 rounded-2xl border border-line bg-white p-5 shadow-sm lg:sticky lg:top-20">
         <h3 class="font-display text-xl font-semibold">Checkout</h3>
         <div class="mt-4 flex items-center justify-between border-b border-line pb-4">
           <span class="text-muted">Total</span>

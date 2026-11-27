@@ -1,6 +1,6 @@
-# LearnHub - Front End (M01141362)
+# 2Learn - Front End (M01141362)
 
-CST3144 Full Stack Development coursework. Vue.js app for booking after school lessons.
+CST3144 Full Stack Development coursework. Vue.js app for booking after-school lessons.
 
 ## Links
 
@@ -11,10 +11,23 @@ CST3144 Full Stack Development coursework. Vue.js app for booking after school l
 
 ## Built with
 
-- Vue 3 (from CDN)
-- Bootstrap 5 (CSS from CDN)
-- Font Awesome 4.7
+- Vue 3.5 (from CDN)
+- Tailwind CSS 4 (browser build from CDN)
+- Font Awesome 4.7 and Google Fonts (Fraunces, Inter)
 - fetch for all requests to the back end
+
+## Files
+
+| File | What it does |
+| ---- | ------------ |
+| index.html | page layout and the root Vue template |
+| app.js | the Vue app: lessons, sorting, search, teacher filter, cart and checkout |
+| api.js | server address and the fetch helpers |
+| components/NavBar.js | top bar with the cart button |
+| components/LessonFilters.js | search box, teacher filter and sort controls |
+| components/LessonCard.js | one lesson with its Add to Cart button |
+| components/CartPage.js | cart items and the checkout form |
+| style.css | v-cloak and the page/card transitions |
 
 ## Running locally
 
