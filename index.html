@@ -124,6 +124,24 @@
             ></lesson-card>
           </transition-group>
         </section>
+
+        <section v-else key="cart">
+          <cart-page
+            :items="cartItems"
+            :total="cartTotal"
+            :order="order"
+            :valid-name="validName"
+            :valid-phone="validPhone"
+            :can-checkout="canCheckout"
+            :submitting="submitting"
+            :order-message="orderMessage"
+            :order-error="orderError"
+            @add="addToCart"
+            @remove="removeFromCart"
+            @checkout="checkout"
+            @back="showLessonsPage"
+          ></cart-page>
+        </section>
       </transition>
     </main>
   </div>

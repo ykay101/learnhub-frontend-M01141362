@@ -2,6 +2,7 @@ import { getJSON, sendJSON, imageURL } from "./api.js";
 import NavBar from "./components/NavBar.js";
 import LessonFilters from "./components/LessonFilters.js";
 import LessonCard from "./components/LessonCard.js";
+import CartPage from "./components/CartPage.js";
 
 const { createApp } = Vue;
 
@@ -59,12 +60,42 @@ const app = createApp({
       }
       return list.slice().sort(compare);
     },
+    cartItems() {
+      let items = [];
+      for (let lesson of this.cart) {
+        let item = items.find(i => i.lesson._id == lesson._id);
+        if (item) {
+          item.quantity = item.quantity + 1;
+        } else {
+          items.push({ lesson: lesson, quantity: 1 });
+        }
+      }
+      return items;
+    },
+    cartTotal() {
+      let total = 0;
+      for (let lesson of this.cart) {
+        total = total + lesson.price;
+      }
+      return total;
+    },
     canOpenCart() {
       return this.cart.length > 0 || this.view == "cart";
+    },
+    validName() {
+      return /^[A-Za-z ]+$/.test(this.order.name) && /[A-Za-z]/.test(this.order.name);
+    },
+    validPhone() {
+      return /^[0-9]+$/.test(this.order.phone);
+    },
+    canCheckout() {
+      return this.validName && this.validPhone && this.cart.length > 0 && !this.submitting;
     }
   },
 
   methods: {
+    imageURL,
+
     async getLessons() {
       try {
         this.lessons = await getJSON("/lessons");
@@ -162,6 +193,63 @@ const app = createApp({
       }
     },
 
+    removeFromCart(lesson) {
+      let index = this.cart.indexOf(lesson);
+      if (index != -1) {
+        this.cart.splice(index, 1);
+        lesson.space = lesson.space + 1;
+      }
+    },
+
+    showLessonsPage() {
+      this.view = "lessons";
+    },
+
+    async checkout() {
+      if (this.submitting) return;
+      this.submitting = true;
+      this.orderMessage = "";
+      this.orderError = "";
+
+      let lessonIDs = [];
+      let spaces = [];
+      for (let lesson of this.cart) {
+        let index = lessonIDs.indexOf(lesson._id);
+        if (index == -1) {
+          lessonIDs.push(lesson._id);
+          spaces.push(1);
+        } else {
+          spaces[index] = spaces[index] + 1;
+        }
+      }
+
+      let newOrder = {
+        name: this.order.name,
+        phone: this.order.phone,
+        lessonIDs: lessonIDs,
+        spaces: spaces
+      };
+
+      try {
+        await sendJSON("POST", "/orders", newOrder);
+
+        for (let id of lessonIDs) {
+          let lesson = this.lessons.find(l => l._id == id);
+          await sendJSON("PUT", "/lessons/" + id, { space: lesson.space });
+        }
+
+        this.orderMessage = "Thank you " + this.order.name + ", your order has been submitted!";
+        this.cart = [];
+        this.order.name = "";
+        this.order.phone = "";
+        this.getEnrolments();
+      } catch (error) {
+        this.orderError = "Sorry, your order could not be submitted. Please try again.";
+      } finally {
+        this.submitting = false;
+      }
+    },
+
     toggleCart() {
       this.view = this.view == "cart" ? "lessons" : "cart";
       this.orderMessage = "";
@@ -173,4 +261,5 @@ const app = createApp({
 app.component("nav-bar", NavBar);
 app.component("lesson-filters", LessonFilters);
 app.component("lesson-card", LessonCard);
+app.component("cart-page", CartPage);
 app.mount("#app");
