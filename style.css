@@ -1,3 +1,30 @@
 [v-cloak] {
   display: none;
 }
+
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.card-move,
+.card-enter-active,
+.card-leave-active {
+  transition: all 0.35s ease;
+}
+
+.card-enter-from,
+.card-leave-to {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+.card-leave-active {
+  position: absolute;
+}

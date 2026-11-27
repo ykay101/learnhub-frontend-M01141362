@@ -1,7 +1,9 @@
 const onLocalhost = location.hostname == "localhost" || location.hostname == "127.0.0.1";
 
+const override = new URLSearchParams(location.search).get("api");
+
 export const SERVER_URL = onLocalhost
-  ? "http://localhost:5000"
+  ? (override || "http://localhost:5000")
   : "https://m01141362-backend.onrender.com";
 
 export async function getJSON(path) {
