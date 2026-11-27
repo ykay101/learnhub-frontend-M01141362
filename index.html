@@ -28,7 +28,7 @@
       .text-brand { background-image: linear-gradient(90deg, #4338ca, #0d9488); -webkit-background-clip: text; background-clip: text; color: transparent; }
     }
   </style>
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
   <script src="https://unpkg.com/vue@3.5.45/dist/vue.global.prod.js"></script>
 </head>
 <body class="bg-surface font-sans text-ink antialiased">
@@ -86,6 +86,10 @@
             :filtering="filtering"
           ></lesson-filters>
 
+          <p v-if="filterError" data-test="filter-error" class="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <i class="fa fa-exclamation-triangle mr-1"></i> {{ filterError }}
+          </p>
+
           <div v-if="loading" class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <div v-for="n in 8" :key="n" data-test="skeleton" class="animate-pulse overflow-hidden rounded-2xl border border-line bg-white">
               <div class="h-36 bg-line/70"></div>
@@ -136,6 +140,7 @@
             :submitting="submitting"
             :order-message="orderMessage"
             :order-error="orderError"
+            :order-warning="orderWarning"
             @add="addToCart"
             @remove="removeFromCart"
             @checkout="checkout"
@@ -153,6 +158,6 @@
     </footer>
   </div>
 
-  <script type="module" src="app.js?v=2"></script>
+  <script type="module" src="app.js?v=3"></script>
 </body>
 </html>

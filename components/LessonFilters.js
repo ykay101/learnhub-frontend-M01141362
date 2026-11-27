@@ -14,7 +14,7 @@ export default {
           :value="searchText"
           @input="$emit('update:searchText', $event.target.value)"
         >
-        <i v-if="filtering" class="fa fa-circle-o-notch fa-spin absolute top-1/2 right-4 -translate-y-1/2 text-indigo"></i>
+        <i v-if="filtering" data-test="search-spinner" class="fa fa-circle-o-notch fa-spin absolute top-1/2 right-4 -translate-y-1/2 text-indigo"></i>
       </label>
 
       <label class="flex items-center gap-2 rounded-xl border border-line bg-surface px-3">

@@ -21,6 +21,7 @@ const app = createApp({
       searchText: "",
       searchTimer: null,
       filtering: false,
+      filterError: "",
       requestNumber: 0,
       sortAttribute: "topic",
       sortOrder: "ascending",
@@ -31,6 +32,7 @@ const app = createApp({
       },
       orderMessage: "",
       orderError: "",
+      orderWarning: "",
       submitting: false
     };
   },
@@ -111,6 +113,9 @@ const app = createApp({
       this.loadError = false;
       this.loading = true;
       this.getLessons();
+      if (this.teachers.length == 0) {
+        this.getTeachers();
+      }
     },
 
     async getEnrolments() {
@@ -141,7 +146,7 @@ const app = createApp({
 
     onSearchInput() {
       clearTimeout(this.searchTimer);
-      if (this.searchText == "") {
+      if (this.searchText.trim() == "") {
         this.searchLessons();
         return;
       }
@@ -150,29 +155,38 @@ const app = createApp({
     },
 
     async searchLessons() {
-      if (this.searchText == "") {
+      let query = this.searchText.trim();
+      if (query == "") {
         if (this.selectedTeacher == "") {
           this.requestNumber++;
           this.visibleIDs = null;
-          this.filtering = false;
+          this.filterError = "";
         }
+        this.filtering = false;
         return;
       }
       this.selectedTeacher = "";
       let thisRequest = ++this.requestNumber;
       this.filtering = true;
-      let results = await getJSON("/search?q=" + encodeURIComponent(this.searchText));
-      if (thisRequest != this.requestNumber) return;
-      this.visibleIDs = results.map(lesson => lesson._id);
+      this.filterError = "";
+      try {
+        let results = await getJSON("/search?q=" + encodeURIComponent(query));
+        if (thisRequest != this.requestNumber) return;
+        this.visibleIDs = results.map(lesson => lesson._id);
+      } catch (error) {
+        if (thisRequest != this.requestNumber) return;
+        this.filterError = "Search didn't work this time. Please try again.";
+      }
       this.filtering = false;
     },
 
     async filterByTeacher() {
       if (this.selectedTeacher == "") {
-        if (this.searchText == "") {
+        if (this.searchText.trim() == "") {
           this.requestNumber++;
           this.visibleIDs = null;
           this.filtering = false;
+          this.filterError = "";
         }
         return;
       }
@@ -180,9 +194,15 @@ const app = createApp({
       this.searchText = "";
       let thisRequest = ++this.requestNumber;
       this.filtering = true;
-      let results = await getJSON("/teachers/" + this.selectedTeacher + "/lessons");
-      if (thisRequest != this.requestNumber) return;
-      this.visibleIDs = results.map(lesson => lesson._id);
+      this.filterError = "";
+      try {
+        let results = await getJSON("/teachers/" + this.selectedTeacher + "/lessons");
+        if (thisRequest != this.requestNumber) return;
+        this.visibleIDs = results.map(lesson => lesson._id);
+      } catch (error) {
+        if (thisRequest != this.requestNumber) return;
+        this.filterError = "We couldn't load that teacher's lessons. Please try again.";
+      }
       this.filtering = false;
     },
 
@@ -222,6 +242,7 @@ const app = createApp({
       this.submitting = true;
       this.orderMessage = "";
       this.orderError = "";
+      this.orderWarning = "";
 
       let lessonIDs = [];
       let spaces = [];
@@ -242,8 +263,10 @@ const app = createApp({
         spaces: spaces
       };
 
+      let orderSaved = false;
       try {
         await sendJSON("POST", "/orders", newOrder);
+        orderSaved = true;
 
         for (let id of lessonIDs) {
           let lesson = this.lessons.find(l => l._id == id);
@@ -251,15 +274,24 @@ const app = createApp({
         }
 
         this.orderMessage = "Thank you " + this.order.name + ", your order has been submitted!";
-        this.cart = [];
-        this.order.name = "";
-        this.order.phone = "";
-        this.getEnrolments();
+        this.clearCart();
       } catch (error) {
-        this.orderError = "Sorry, your order could not be submitted. Please try again.";
+        if (orderSaved) {
+          this.orderWarning = "Your order was saved, but we couldn't update the available spaces. There's no need to order again.";
+          this.clearCart();
+        } else {
+          this.orderError = "Sorry, your order could not be submitted. Please try again.";
+        }
       } finally {
         this.submitting = false;
       }
+    },
+
+    clearCart() {
+      this.cart = [];
+      this.order.name = "";
+      this.order.phone = "";
+      this.getEnrolments();
     },
 
     toggleCart() {
@@ -267,6 +299,7 @@ const app = createApp({
       this.scrollToView();
       this.orderMessage = "";
       this.orderError = "";
+      this.orderWarning = "";
     }
   }
 });
