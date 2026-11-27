@@ -7,7 +7,7 @@ CST3144 Full Stack Development coursework. Vue.js app for booking after school l
 - Vue.js App - GitHub repo: https://github.com/ykay101/learnhub-frontend-M01141362
 - Vue.js App - GitHub Pages: https://ykay101.github.io/learnhub-frontend-M01141362/
 - Express.js App - GitHub repo: https://github.com/ykay101/learnhub-backend-M01141362
-- Express.js App - all lessons (render.com): https://m01141362-learnhub.onrender.com/lessons
+- Express.js App - all lessons (render.com): https://m01141362-backend.onrender.com/lessons
 
 ## Built with
 

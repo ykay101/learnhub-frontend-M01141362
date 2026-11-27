@@ -1,6 +1,6 @@
 const SERVER_URL = (location.hostname == "localhost" || location.hostname == "127.0.0.1")
   ? "http://localhost:5000"
-  : "https://m01141362-learnhub.onrender.com";
+  : "https://m01141362-backend.onrender.com";
 
 const { createApp } = Vue;
 
