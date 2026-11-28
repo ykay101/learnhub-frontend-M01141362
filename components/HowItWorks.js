@@ -17,7 +17,7 @@ export default {
   },
   template: `
     <section class="relative -mt-16 pb-6">
-      <div class="mx-auto max-w-6xl px-4">
+      <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <div class="grid gap-4 md:grid-cols-3">
           <article v-for="(step, index) in steps" :key="step.title" v-tilt class="tilt-surface group relative overflow-hidden rounded-3xl border border-line bg-white/90 p-6 shadow-xl shadow-indigo-950/5 backdrop-blur">
             <div aria-hidden="true" class="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gradient-to-br opacity-10 blur-2xl transition group-hover:opacity-25" :class="step.glow"></div>

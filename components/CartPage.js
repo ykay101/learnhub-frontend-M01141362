@@ -2,15 +2,67 @@ import { imageURL } from "../api.js";
 import { money, pounds } from "../money.js";
 
 export default {
-  props: ["items", "total", "order", "validName", "validPhone", "canCheckout", "submitting", "orderMessage", "orderError", "orderWarning", "paymentsReady", "receipt"],
-  emits: ["add", "remove", "checkout", "back", "update:name", "update:phone"],
+  props: ["items", "total", "order", "validName", "validPhone", "canCheckout", "submitting", "orderMessage", "orderError", "orderWarning", "paymentsReady", "receipt", "lastOrder", "signedIn"],
+  emits: ["add", "remove", "checkout", "back", "update:name", "update:phone", "bookings", "plan"],
   methods: {
     imageURL,
     money,
     pounds
   },
+  computed: {
+    confirmed() {
+      return Boolean(this.orderMessage) && this.items.length == 0;
+    }
+  },
   template: `
-    <div class="grid gap-6 lg:grid-cols-[1fr_380px]">
+    <div v-if="confirmed" class="mx-auto max-w-2xl">
+      <div data-test="order-message" class="modal-pop relative overflow-hidden rounded-[32px] bg-white text-center shadow-2xl shadow-indigo-950/10 ring-1 ring-line">
+        <div class="relative overflow-hidden bg-[#0d0b2a] px-6 pt-10 pb-12 text-white">
+          <div aria-hidden="true" class="aurora absolute inset-0 opacity-90"></div>
+          <div aria-hidden="true" class="card-dots absolute inset-0 opacity-15"></div>
+          <div aria-hidden="true" class="confetti absolute inset-0"><i v-for="n in 14" :key="n" :style="{ left: (n * 7) + '%', animationDelay: (n % 5) * 0.15 + 's' }"></i></div>
+          <div class="relative">
+            <span class="success-ring mx-auto grid h-20 w-20 place-items-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 text-4xl shadow-xl shadow-emerald-500/40 ring-8 ring-white/10"><i class="fa fa-check"></i></span>
+            <h2 class="mt-6 font-display text-4xl font-semibold tracking-tight">You're booked in!</h2>
+            <p class="mx-auto mt-3 max-w-md text-white/75">{{ orderMessage }}</p>
+          </div>
+        </div>
+
+        <div class="px-6 py-7 text-left sm:px-8">
+          <div v-if="receipt" class="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-900 ring-1 ring-emerald-100">
+            <span class="font-semibold"><i class="fa fa-credit-card mr-1.5"></i>Paid {{ money(receipt.amount) }}</span>
+            <span class="flex items-center gap-2">
+              <span v-if="receipt.cardLast4">•••• {{ receipt.cardLast4 }}</span>
+              <span class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">Test mode</span>
+            </span>
+          </div>
+
+          <h3 v-if="lastOrder" class="mt-6 text-xs font-semibold tracking-widest text-muted uppercase">What you booked</h3>
+          <ul v-if="lastOrder" class="mt-3 divide-y divide-line rounded-2xl ring-1 ring-line">
+            <li v-for="item in lastOrder.items" :key="item.id" class="flex items-center gap-4 p-3">
+              <img :src="imageURL(item.image)" :alt="item.topic" class="h-12 w-16 shrink-0 rounded-xl object-cover">
+              <div class="min-w-0 flex-1">
+                <p class="font-display text-lg font-semibold">{{ item.topic }}</p>
+                <p class="text-sm text-muted">{{ item.location }} · every {{ item.day }} at {{ item.time }}</p>
+              </div>
+              <span class="text-sm text-muted">× {{ item.quantity }}</span>
+              <span class="w-16 text-right font-semibold">{{ pounds(item.price * item.quantity) }}</span>
+            </li>
+            <li class="flex items-center justify-between p-3 font-semibold">
+              <span>Total</span><span class="font-display text-xl text-indigo-700">{{ pounds(lastOrder.total) }}</span>
+            </li>
+          </ul>
+
+          <div class="mt-7 grid gap-3 sm:grid-cols-3">
+            <button v-if="signedIn" class="rounded-2xl bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 py-3 font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:brightness-110" @click="$emit('bookings')"><i class="fa fa-ticket mr-1"></i>My bookings</button>
+            <button class="rounded-2xl py-3 font-semibold text-indigo-700 ring-1 ring-indigo-200 transition hover:bg-indigo-50" @click="$emit('plan')"><i class="fa fa-magic mr-1"></i>Plan another week</button>
+            <button class="rounded-2xl py-3 font-semibold text-ink ring-1 ring-line transition hover:bg-surface" :class="signedIn ? '' : 'sm:col-span-2'" @click="$emit('back')"><i class="fa fa-arrow-left mr-1"></i>Back to lessons</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-else class="grid gap-6 lg:grid-cols-[1fr_380px]">
       <div class="min-w-0">
         <h2 class="font-display text-3xl font-semibold">Your cart</h2>
         <p class="mt-1 text-muted">Check your lessons, then fill in your details to book.</p>

@@ -66,7 +66,8 @@ const app = createApp({
       similarLesson: null,
       plannerNotice: "",
       plannerKey: 0,
-      receipt: null
+      receipt: null,
+      lastOrder: null
     };
   },
 
@@ -236,6 +237,7 @@ const app = createApp({
       this.orderError = "";
       this.orderWarning = "";
       this.receipt = null;
+      this.lastOrder = null;
       this.familyMessage = "";
       this.familyError = "";
       if (view == "bookings") this.loadBookings();
@@ -464,6 +466,7 @@ const app = createApp({
       this.orderError = "";
       this.orderWarning = "";
       this.receipt = null;
+      this.lastOrder = null;
 
       let lessonIDs = [];
       let spaces = [];
@@ -518,6 +521,19 @@ const app = createApp({
           lesson.space = newSpace;
         }
 
+        this.lastOrder = {
+          items: this.cartItems.map(item => ({
+            id: item.lesson._id,
+            topic: item.lesson.topic,
+            location: item.lesson.location,
+            day: item.lesson.day,
+            time: item.lesson.time,
+            image: item.lesson.image,
+            price: item.lesson.price,
+            quantity: item.quantity
+          })),
+          total: this.cartTotal
+        };
         this.orderMessage = "Thank you " + this.order.name + ", your order has been submitted!";
         if (paymentId) {
           this.receipt = { amount: saved.amount, cardLast4: saved.cardLast4 };
@@ -564,6 +580,7 @@ const app = createApp({
       this.orderError = "";
       this.orderWarning = "";
       this.receipt = null;
+      this.lastOrder = null;
     }
   }
 });

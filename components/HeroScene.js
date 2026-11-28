@@ -150,7 +150,7 @@ export default {
         </span>
       </div>
 
-      <div class="relative mx-auto grid max-w-6xl items-center gap-12 px-4 pt-16 pb-28 sm:pt-20 lg:grid-cols-[1.05fr_1fr] lg:pb-36">
+      <div class="relative mx-auto grid max-w-[1400px] items-center gap-12 px-4 pt-16 sm:px-6 lg:px-8 pb-28 sm:pt-20 lg:grid-cols-[1.05fr_1fr] lg:pb-36">
         <div class="hero-copy min-w-0">
           <p class="reveal inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-sm font-medium text-white/80 backdrop-blur" style="--d: 0ms">
             <span class="live-dot h-2 w-2 rounded-full bg-emerald-400"></span> AI-planned after-school lessons · North London

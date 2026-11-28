@@ -21,12 +21,12 @@ export default {
   },
   template: `
     <div class="relative">
-      <button v-if="!user" data-test="signin-btn" class="rounded-full px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/30 transition hover:bg-white/10" @click="$emit('signin')">
-        <i class="fa fa-user-circle-o mr-1"></i> Sign in
+      <button v-if="!user" data-test="signin-btn" class="inline-flex h-10 items-center gap-2 rounded-full px-4 text-sm font-semibold whitespace-nowrap text-white ring-1 ring-white/25 transition hover:bg-white/10" @click="$emit('signin')">
+        <i class="fa fa-user-circle-o"></i><span>Sign in</span>
       </button>
       <template v-else>
-        <button data-test="account-btn" class="grid h-10 w-10 place-items-center rounded-full bg-accent font-semibold text-white ring-2 ring-white/40 transition hover:brightness-110" :aria-label="'Account for ' + user.name" @click="open = !open">{{ initials }}</button>
-        <div v-if="open" class="absolute right-0 z-40 mt-2 w-56 overflow-hidden rounded-2xl border border-line bg-white text-ink shadow-xl">
+        <button data-test="account-btn" class="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-orange-400 to-pink-500 text-sm font-bold text-white shadow-md ring-2 ring-white/30 transition hover:brightness-110" :aria-label="'Account for ' + user.name" @click="open = !open">{{ initials }}</button>
+        <div v-if="open" class="modal-pop absolute right-0 z-40 mt-3 w-60 overflow-hidden rounded-2xl border border-line bg-white text-ink shadow-2xl shadow-indigo-950/20">
           <p class="border-b border-line px-4 py-3 text-sm"><span class="block font-semibold">{{ user.name }}</span><span class="text-muted">{{ user.email }}</span></p>
           <button data-test="menu-planner" class="block w-full px-4 py-2.5 text-left text-sm hover:bg-surface" @click="pick('planner')"><i class="fa fa-magic mr-2 text-indigo"></i>Plan my week</button>
           <button data-test="menu-family" class="block w-full px-4 py-2.5 text-left text-sm hover:bg-surface" @click="pick('family')"><i class="fa fa-users mr-2 text-indigo"></i>My family</button>

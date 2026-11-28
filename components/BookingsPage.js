@@ -13,7 +13,7 @@ export default {
     }
   },
   template: `
-    <div data-test="bookings-page" class="mx-auto max-w-3xl">
+    <div data-test="bookings-page" class="mx-auto max-w-4xl">
       <h2 class="font-display text-3xl font-semibold">My bookings</h2>
       <p class="mt-1 text-muted">Every lesson you've booked while signed in.</p>
 

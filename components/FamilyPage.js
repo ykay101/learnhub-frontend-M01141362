@@ -28,7 +28,7 @@ export default {
     }
   },
   template: `
-    <div data-test="family-page" class="mx-auto max-w-3xl">
+    <div data-test="family-page" class="mx-auto max-w-4xl">
       <h2 class="font-display text-3xl font-semibold">My family</h2>
       <p class="mt-1 text-muted">The planner uses these details to suggest the right lessons for each child.</p>
 
