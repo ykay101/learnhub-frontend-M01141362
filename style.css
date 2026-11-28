@@ -289,3 +289,26 @@ button:disabled {
     filter: none;
   }
 }
+
+.card-dots {
+  background-image: radial-gradient(rgb(255 255 255 / 0.5) 1px, transparent 1px);
+  background-size: 14px 14px;
+  mask-image: linear-gradient(to bottom left, black, transparent 70%);
+}
+
+.card-orb {
+  animation: orb 10s ease-in-out infinite;
+}
+
+.add-btn:not(:disabled)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 0.35) 50%, transparent 65%);
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+}
+
+.add-btn:not(:disabled):hover::after {
+  transform: translateX(120%);
+}
