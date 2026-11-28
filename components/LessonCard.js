@@ -1,4 +1,5 @@
 import { imageURL } from "../api.js";
+import { pounds } from "../money.js";
 
 const colours = {
   Maths: "bg-blue-50 text-blue-700 ring-blue-200",
@@ -25,6 +26,9 @@ export default {
     },
     image() {
       return imageURL(this.lesson.image);
+    },
+    price() {
+      return pounds(this.lesson.price);
     }
   },
   template: `
@@ -45,7 +49,7 @@ export default {
             <span class="inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1" :class="chipClass">Ages {{ lesson.ageMin }}–{{ lesson.ageMax }}</span>
             <h3 data-test="topic" class="mt-2 font-display text-xl font-semibold">{{ lesson.topic }}</h3>
           </div>
-          <p data-test="price" class="font-display text-2xl font-semibold text-indigo">£{{ lesson.price }}</p>
+          <p data-test="price" class="font-display text-2xl font-semibold text-indigo">{{ price }}</p>
         </div>
 
         <p class="mt-1 text-sm text-muted"><i class="fa fa-map-marker mr-1"></i>{{ lesson.location }}</p>

@@ -5,6 +5,12 @@ import LessonCard from "./components/LessonCard.js";
 import CartPage from "./components/CartPage.js";
 import CardForm from "./components/CardForm.js";
 import { setupPayments, payForCart } from "./payment.js";
+import { money } from "./money.js";
+import { getToken, setToken, clearToken } from "./session.js";
+import AuthModal from "./components/AuthModal.js";
+import AccountMenu from "./components/AccountMenu.js";
+import FamilyPage from "./components/FamilyPage.js";
+import BookingsPage from "./components/BookingsPage.js";
 
 const { createApp } = Vue;
 
@@ -38,6 +44,19 @@ const app = createApp({
       submitting: false,
       paymentsReady: false,
       paidPaymentId: null,
+      user: null,
+      authOpen: false,
+      authMode: "login",
+      authBusy: false,
+      authError: "",
+      authReason: "",
+      pendingView: "",
+      familyBusy: false,
+      familyMessage: "",
+      familyError: "",
+      bookings: [],
+      bookingsLoading: false,
+      bookingsError: "",
       receipt: null
     };
   },
@@ -46,6 +65,7 @@ const app = createApp({
     this.getLessons();
     this.getTeachers();
     this.checkPayments();
+    this.loadUser();
   },
 
   watch: {
@@ -112,6 +132,109 @@ const app = createApp({
         this.loadError = true;
       } finally {
         this.loading = false;
+      }
+    },
+
+    async loadUser() {
+      if (!getToken()) return;
+      try {
+        let result = await getJSON("/auth/me");
+        this.user = result.user;
+      } catch (error) {
+        if (error.status == 401) clearToken();
+      }
+    },
+
+    openAuth(reason, view) {
+      this.authReason = reason || "";
+      this.pendingView = view || "";
+      this.authError = "";
+      this.authMode = "login";
+      this.authOpen = true;
+    },
+
+    async submitAuth(form) {
+      this.authBusy = true;
+      this.authError = "";
+      try {
+        let path = this.authMode == "register" ? "/auth/register" : "/auth/login";
+        let result = await sendJSON("POST", path, form);
+        setToken(result.token);
+        this.user = result.user;
+        this.authOpen = false;
+        if (this.pendingView) {
+          this.go(this.pendingView);
+          this.pendingView = "";
+        }
+      } catch (error) {
+        this.authError = error.message;
+      } finally {
+        this.authBusy = false;
+      }
+    },
+
+    async signOut() {
+      try {
+        await sendJSON("POST", "/auth/logout", {});
+      } catch (error) {
+        clearToken();
+      }
+      clearToken();
+      this.user = null;
+      this.bookings = [];
+      if (this.view != "cart") {
+        this.go("lessons");
+      }
+    },
+
+    go(view) {
+      if (["family", "bookings", "planner"].includes(view) && !this.user) {
+        this.openAuth("Please sign in to continue.", view);
+        return;
+      }
+      this.view = view;
+      this.orderMessage = "";
+      this.orderError = "";
+      this.orderWarning = "";
+      this.receipt = null;
+      this.familyMessage = "";
+      this.familyError = "";
+      if (view == "bookings") this.loadBookings();
+      if (view == "cart") this.prefillOrder();
+      this.scrollToView();
+    },
+
+    prefillOrder() {
+      if (this.user && !this.order.name && !this.order.phone) {
+        this.order.name = this.user.name;
+        this.order.phone = this.user.phone || "";
+      }
+    },
+
+    async saveFamily(profile) {
+      this.familyBusy = true;
+      this.familyMessage = "";
+      this.familyError = "";
+      try {
+        let result = await sendJSON("PUT", "/me/profile", profile);
+        this.user = result.user;
+        this.familyMessage = "Saved";
+      } catch (error) {
+        this.familyError = error.message;
+      } finally {
+        this.familyBusy = false;
+      }
+    },
+
+    async loadBookings() {
+      this.bookingsLoading = true;
+      this.bookingsError = "";
+      try {
+        this.bookings = await getJSON("/orders/mine");
+      } catch (error) {
+        this.bookingsError = "We couldn't load your bookings. Please try again.";
+      } finally {
+        this.bookingsLoading = false;
       }
     },
 
@@ -271,8 +394,8 @@ const app = createApp({
       }
 
       let newOrder = {
-        name: this.order.name,
-        phone: this.order.phone,
+        name: this.order.name.trim(),
+        phone: this.order.phone.trim(),
         lessonIDs: lessonIDs,
         spaces: spaces
       };
@@ -280,10 +403,15 @@ const app = createApp({
       let paymentId = this.paidPaymentId;
       if (this.paymentsReady && !paymentId) {
         try {
-          paymentId = await payForCart(lessonIDs, spaces);
+          paymentId = await payForCart(lessonIDs, spaces, Math.round(this.cartTotal * 100));
           this.paidPaymentId = paymentId;
         } catch (error) {
-          this.orderError = error.message;
+          if (error.newAmount) {
+            await this.refreshPrices();
+            this.orderError = "Prices changed: the total is now " + money(error.newAmount) + ". Please press Checkout again.";
+          } else {
+            this.orderError = error.message;
+          }
           this.submitting = false;
           return;
         }
@@ -297,15 +425,19 @@ const app = createApp({
         let saved = await sendJSON("POST", "/orders", newOrder);
         orderSaved = true;
 
-        for (let id of lessonIDs) {
-          let lesson = this.lessons.find(l => l._id == id);
-          await sendJSON("PUT", "/lessons/" + id, { space: lesson.space });
+        let fresh = await getJSON("/lessons");
+        for (let i = 0; i < lessonIDs.length; i++) {
+          let lesson = this.lessons.find(l => l._id == lessonIDs[i]);
+          let current = fresh.find(l => l._id == lessonIDs[i]);
+          let newSpace = Math.max(0, (current ? current.space : lesson.space + spaces[i]) - spaces[i]);
+          await sendJSON("PUT", "/lessons/" + lessonIDs[i], { space: newSpace });
+          lesson.space = newSpace;
         }
 
         this.orderMessage = "Thank you " + this.order.name + ", your order has been submitted!";
         if (paymentId) {
           this.receipt = { amount: saved.amount, cardLast4: saved.cardLast4 };
-          this.orderMessage = this.orderMessage + " Payment of £" + saved.amount / 100 + " received.";
+          this.orderMessage = this.orderMessage + " Payment of " + money(saved.amount) + " received.";
         }
         this.clearCart();
       } catch (error) {
@@ -322,6 +454,18 @@ const app = createApp({
       }
     },
 
+    async refreshPrices() {
+      try {
+        let fresh = await getJSON("/lessons");
+        for (let lesson of this.lessons) {
+          let current = fresh.find(l => l._id == lesson._id);
+          if (current) lesson.price = current.price;
+        }
+      } catch (error) {
+        return;
+      }
+    },
+
     clearCart() {
       this.paidPaymentId = null;
       this.cart = [];
@@ -331,8 +475,7 @@ const app = createApp({
     },
 
     toggleCart() {
-      this.view = this.view == "cart" ? "lessons" : "cart";
-      this.scrollToView();
+      this.go(this.view == "cart" ? "lessons" : "cart");
       this.orderMessage = "";
       this.orderError = "";
       this.orderWarning = "";
@@ -346,4 +489,8 @@ app.component("lesson-filters", LessonFilters);
 app.component("lesson-card", LessonCard);
 app.component("cart-page", CartPage);
 app.component("card-form", CardForm);
+app.component("auth-modal", AuthModal);
+app.component("account-menu", AccountMenu);
+app.component("family-page", FamilyPage);
+app.component("bookings-page", BookingsPage);
 app.mount("#app");

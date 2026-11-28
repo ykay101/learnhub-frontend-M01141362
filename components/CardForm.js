@@ -3,11 +3,11 @@ import { mountCardForm, updateAmount } from "../payment.js";
 export default {
   props: ["amount"],
   mounted() {
-    mountCardForm(this.$refs.box, this.amount * 100);
+    mountCardForm(this.$refs.box, Math.round(this.amount * 100));
   },
   watch: {
     amount(value) {
-      updateAmount(value * 100);
+      updateAmount(Math.round(value * 100));
     }
   },
   template: `

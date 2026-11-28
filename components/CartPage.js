@@ -1,10 +1,13 @@
 import { imageURL } from "../api.js";
+import { money, pounds } from "../money.js";
 
 export default {
   props: ["items", "total", "order", "validName", "validPhone", "canCheckout", "submitting", "orderMessage", "orderError", "orderWarning", "paymentsReady", "receipt"],
-  emits: ["add", "remove", "checkout", "back"],
+  emits: ["add", "remove", "checkout", "back", "update:name", "update:phone"],
   methods: {
-    imageURL
+    imageURL,
+    money,
+    pounds
   },
   template: `
     <div class="grid gap-6 lg:grid-cols-[1fr_380px]">
@@ -18,7 +21,7 @@ export default {
             <p class="font-display text-xl font-semibold text-emerald-900">Order submitted</p>
             <p class="text-emerald-800">{{ orderMessage }}</p>
             <p v-if="receipt" class="mt-3 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl bg-white px-3 py-2 text-sm text-emerald-900 ring-1 ring-emerald-200">
-              <span><i class="fa fa-credit-card mr-1"></i>Paid £{{ receipt.amount / 100 }}</span>
+              <span><i class="fa fa-credit-card mr-1"></i>Paid {{ money(receipt.amount) }}</span>
               <span v-if="receipt.cardLast4">•••• {{ receipt.cardLast4 }}</span>
               <span class="rounded-full bg-amber-100 px-2 text-xs font-semibold text-amber-800">Test mode</span>
             </p>
@@ -48,7 +51,7 @@ export default {
               <p class="text-sm text-muted sm:truncate">
                 <i class="fa fa-map-marker mr-1"></i>{{ item.lesson.location }}
                 <span class="mx-1">·</span>{{ item.lesson.day }} {{ item.lesson.time }}
-                <span class="mx-1">·</span>£{{ item.lesson.price }} each
+                <span class="mx-1">·</span>{{ pounds(item.lesson.price) }} each
               </p>
             </div>
             </div>
@@ -58,7 +61,7 @@ export default {
               <span data-test="qty" class="w-6 text-center font-semibold">{{ item.quantity }}</span>
               <button data-test="plus" class="grid h-8 w-8 place-items-center rounded-full hover:bg-white disabled:opacity-30" aria-label="Add one" :disabled="item.lesson.space == 0" @click="$emit('add', item.lesson)"><i class="fa fa-plus text-xs"></i></button>
             </div>
-            <p class="w-16 text-right font-display text-lg font-semibold">£{{ item.lesson.price * item.quantity }}</p>
+            <p class="w-16 text-right font-display text-lg font-semibold">{{ pounds(item.lesson.price * item.quantity) }}</p>
             </div>
           </li>
         </transition-group>
@@ -68,12 +71,12 @@ export default {
         <h3 class="font-display text-xl font-semibold">Checkout</h3>
         <div class="mt-4 flex items-center justify-between border-b border-line pb-4">
           <span class="text-muted">Total</span>
-          <span data-test="cart-total" class="font-display text-3xl font-semibold text-indigo">£{{ total }}</span>
+          <span data-test="cart-total" class="font-display text-3xl font-semibold text-indigo">{{ pounds(total) }}</span>
         </div>
 
         <label class="mt-4 block">
           <span class="text-sm font-medium">Full name</span>
-          <input data-test="name" v-model="order.name" type="text" autocomplete="name" placeholder="Enter your full name"
+          <input data-test="name" :value="order.name" @input="$emit('update:name', $event.target.value)" type="text" autocomplete="name" placeholder="Enter your full name"
             class="mt-1 w-full rounded-xl border bg-surface px-4 py-3 outline-none transition focus:bg-white focus:ring-4"
             :class="order.name && !validName ? 'border-red-400 focus:ring-red-100' : 'border-line focus:border-indigo focus:ring-indigo/10'">
           <span v-if="order.name && !validName" data-test="name-error" class="mt-1 block text-sm text-red-600">Please use letters only.</span>
@@ -81,7 +84,7 @@ export default {
 
         <label class="mt-3 block">
           <span class="text-sm font-medium">Phone number</span>
-          <input data-test="phone" v-model="order.phone" type="tel" autocomplete="tel" placeholder="Enter your phone number"
+          <input data-test="phone" :value="order.phone" @input="$emit('update:phone', $event.target.value)" type="tel" autocomplete="tel" placeholder="Enter your phone number"
             class="mt-1 w-full rounded-xl border bg-surface px-4 py-3 outline-none transition focus:bg-white focus:ring-4"
             :class="order.phone && !validPhone ? 'border-red-400 focus:ring-red-100' : 'border-line focus:border-indigo focus:ring-indigo/10'">
           <span v-if="order.phone && !validPhone" data-test="phone-error" class="mt-1 block text-sm text-red-600">Please use numbers only.</span>
@@ -94,7 +97,7 @@ export default {
           :disabled="!canCheckout"
           @click="$emit('checkout')">
           <template v-if="submitting"><i class="fa fa-circle-o-notch fa-spin mr-1"></i> {{ paymentsReady ? 'Processing payment…' : 'Placing order…' }}</template>
-          <template v-else><i class="fa fa-lock mr-1"></i> Checkout<span v-if="paymentsReady && total > 0"> · £{{ total }}</span></template>
+          <template v-else><i class="fa fa-lock mr-1"></i> Checkout<span v-if="paymentsReady && total > 0"> · {{ pounds(total) }}</span></template>
         </button>
 
         <p v-if="orderError" data-test="order-error" class="mt-3 rounded-xl bg-red-50 p-3 text-sm text-red-700">{{ orderError }}</p>

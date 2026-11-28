@@ -46,13 +46,19 @@ export function updateAmount(amountPence) {
   }
 }
 
-export async function payForCart(lessonIDs, spaces) {
+export async function payForCart(lessonIDs, spaces, expectedPence) {
   let submitted = await elements.submit();
   if (submitted.error) {
     throw new Error(submitted.error.message);
   }
 
   let intent = await sendJSON("POST", "/payments/intent", { lessonIDs: lessonIDs, spaces: spaces });
+  if (intent.amount != expectedPence) {
+    elements.update({ amount: intent.amount });
+    let error = new Error("Prices changed");
+    error.newAmount = intent.amount;
+    throw error;
+  }
 
   let result = await stripe.confirmPayment({
     elements: elements,

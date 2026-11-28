@@ -39,8 +39,23 @@
       :cart-count="cart.length"
       :can-open-cart="canOpenCart"
       :view="view"
+      :user="user"
       @toggle-cart="toggleCart"
+      @go="go"
+      @signin="openAuth('', '')"
+      @signout="signOut"
     ></nav-bar>
+
+    <auth-modal
+      v-if="authOpen"
+      :mode="authMode"
+      :busy="authBusy"
+      :error="authError"
+      :reason="authReason"
+      @close="authOpen = false"
+      @switch="authMode = $event; authError = ''"
+      @submit="submitAuth"
+    ></auth-modal>
 
     <header v-if="view == 'lessons'" class="relative overflow-hidden bg-brand text-white">
       <div aria-hidden="true" class="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-teal/40 blur-3xl"></div>
@@ -130,7 +145,15 @@
           </transition-group>
         </section>
 
-        <section v-else key="cart">
+        <section v-else-if="view == 'family' && user" key="family">
+          <family-page :user="user" :busy="familyBusy" :message="familyMessage" :error="familyError" @save="saveFamily"></family-page>
+        </section>
+
+        <section v-else-if="view == 'bookings' && user" key="bookings">
+          <bookings-page :bookings="bookings" :loading="bookingsLoading" :error="bookingsError" @browse="go('lessons')"></bookings-page>
+        </section>
+
+        <section v-else-if="view == 'cart'" key="cart">
           <cart-page
             :items="cartItems"
             :total="cartTotal"
@@ -147,6 +170,8 @@
             @add="addToCart"
             @remove="removeFromCart"
             @checkout="checkout"
+            @update:name="order.name = $event"
+            @update:phone="order.phone = $event"
             @back="showLessonsPage"
           ></cart-page>
         </section>
@@ -161,6 +186,6 @@
     </footer>
   </div>
 
-  <script type="module" src="app.js?v=5"></script>
+  <script type="module" src="app.js?v=7"></script>
 </body>
 </html>
