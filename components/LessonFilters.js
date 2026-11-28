@@ -10,7 +10,7 @@ export default {
           data-test="search"
           type="search"
           class="w-full rounded-xl border border-line bg-surface py-3 pr-10 pl-11 outline-none transition focus:border-indigo focus:bg-white focus:ring-4 focus:ring-indigo/10"
-          placeholder="Search subject, place, price or spaces"
+          placeholder="Search subject, place or price"
           :value="searchText"
           @input="$emit('update:searchText', $event.target.value)"
         >
