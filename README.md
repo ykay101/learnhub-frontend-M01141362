@@ -15,7 +15,8 @@ CST3144 Full Stack Development coursework. Vue.js app for booking after-school l
 - Tailwind CSS 4 (browser build from CDN)
 - Font Awesome 4.7 and Google Fonts (Fraunces, Inter)
 - Stripe.js (card payments in test mode)
-- fetch for all requests to the back end
+- fetch for all requests to the back end (including reading the planner's streamed steps with `response.body.getReader()`)
+- the browser's speech recognition for voice input in the planner
 
 ## Files
 
@@ -29,8 +30,20 @@ CST3144 Full Stack Development coursework. Vue.js app for booking after-school l
 | components/LessonCard.js | one lesson with its Add to Cart button |
 | components/CartPage.js | cart items and the checkout form |
 | components/CardForm.js | Stripe card form shown in the checkout |
+| components/AuthModal.js | sign in and create account |
+| components/AccountMenu.js | the signed-in menu in the top bar |
+| components/FamilyPage.js | phone, home area and children |
+| components/BookingsPage.js | my past bookings |
+| components/PlannerPanel.js | the AI planner: request box, voice input, live steps and results |
+| components/WeekCalendar.js | the family week calendar and budget bar |
 | payment.js | sets up Stripe and pays for the cart |
+| session.js | keeps the sign-in token in the browser |
+| money.js | formats prices |
 | style.css | v-cloak and the page/card transitions |
+
+## Marked features
+
+The lessons list, sorting, search, teacher filter, Add to Cart, cart page and checkout are all in `app.js`. `getLessons()` fetches the lessons with GET, and `checkout()` saves the order with POST and then updates the spaces with PUT. Every request uses `fetch`, which returns a promise (`async`/`await` is written on top of promises).
 
 ## Running locally
 
