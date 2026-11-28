@@ -14,6 +14,7 @@ CST3144 Full Stack Development coursework. Vue.js app for booking after-school l
 - Vue 3.5 (from CDN)
 - Tailwind CSS 4 (browser build from CDN)
 - Font Awesome 4.7 and Google Fonts (Fraunces, Inter)
+- Stripe.js (card payments in test mode)
 - fetch for all requests to the back end
 
 ## Files
@@ -27,6 +28,8 @@ CST3144 Full Stack Development coursework. Vue.js app for booking after-school l
 | components/LessonFilters.js | search box, teacher filter and sort controls |
 | components/LessonCard.js | one lesson with its Add to Cart button |
 | components/CartPage.js | cart items and the checkout form |
+| components/CardForm.js | Stripe card form shown in the checkout |
+| payment.js | sets up Stripe and pays for the cart |
 | style.css | v-cloak and the page/card transitions |
 
 ## Running locally
