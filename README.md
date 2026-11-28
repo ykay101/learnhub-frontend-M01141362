@@ -1,6 +1,6 @@
 # 2Learn - Front End (M01141362)
 
-CST3144 Full Stack Development coursework. Vue.js app for booking after-school lessons.
+Vue.js app for booking after-school lessons.
 
 ## Links
 
@@ -11,50 +11,28 @@ CST3144 Full Stack Development coursework. Vue.js app for booking after-school l
 
 ## Built with
 
-- Vue 3.5 (from CDN)
-- Tailwind CSS 4 (browser build from CDN)
-- Font Awesome 4.7 and Google Fonts (Fraunces, Inter)
-- Stripe.js (card payments in test mode)
-- fetch for all requests to the back end (including reading the planner's streamed steps with `response.body.getReader()`)
-- the browser's speech recognition for voice input in the planner
+Vue 3 and Tailwind CSS from CDN, Font Awesome, Stripe.js, and `fetch` for every request to the back end.
 
 ## Files
 
 | File | What it does |
 | ---- | ------------ |
 | index.html | page layout and the root Vue template |
-| app.js | the Vue app: lessons, sorting, search, teacher filter, cart and checkout |
-| api.js | server address and the fetch helpers |
-| components/NavBar.js | top bar with the cart button |
-| components/LessonFilters.js | search box, teacher filter and sort controls |
-| components/LessonCard.js | one lesson with its Add to Cart button |
-| components/CartPage.js | cart items and the checkout form |
-| components/CardForm.js | Stripe card form shown in the checkout |
-| components/AuthModal.js | sign in and create account |
-| components/AccountMenu.js | the signed-in menu in the top bar |
-| components/FamilyPage.js | phone, home area and children |
-| components/BookingsPage.js | my past bookings |
-| components/PlannerPanel.js | the AI planner: request box, voice input, live steps and results |
-| components/WeekCalendar.js | the family week calendar and budget bar |
-| payment.js | sets up Stripe and pays for the cart |
-| session.js | keeps the sign-in token in the browser |
-| money.js | formats prices |
-| components/HeroScene.js | landing hero: particle canvas, 3D tilt and the live agent preview |
-| components/AgentDemo.js | the looping "agent at work" preview on the landing page |
-| components/HowItWorks.js | the three steps and the moving subject strip |
-| tilt.js | Vue directive (v-tilt) that tilts cards in 3D with the mouse |
-| style.css | v-cloak and the page/card transitions |
+| app.js | the Vue app: lessons, sorting, search, cart and checkout |
+| api.js | server address and fetch helpers |
+| payment.js | Stripe card payments |
+| session.js | keeps the sign-in token |
+| components/ | the Vue components (lesson card, cart, sign in, planner, etc.) |
+| style.css | animations and transitions |
 
-## Marked features
-
-The lessons list, sorting, search, teacher filter, Add to Cart, cart page and checkout are all in `app.js`. `getLessons()` fetches the lessons with GET, and `checkout()` saves the order with POST and then updates the spaces with PUT. Every request uses `fetch`, which returns a promise (`async`/`await` is written on top of promises).
+`getLessons()` in `app.js` loads the lessons with GET, and `checkout()` saves the order with POST and then updates the spaces with PUT.
 
 ## Running locally
 
-Start the back end first (it runs on port 5000), then serve this folder, e.g. with VS Code Live Preview or:
+Start the back end first (port 5000), then serve this folder:
 
 ```
 python3 -m http.server 5500
 ```
 
-and open http://localhost:5500. When the page is opened on localhost it uses the local back end, otherwise it uses the render.com server.
+and open http://localhost:5500. On localhost it uses the local back end, otherwise the render.com server.
