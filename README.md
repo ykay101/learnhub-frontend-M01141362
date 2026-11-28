@@ -39,6 +39,10 @@ CST3144 Full Stack Development coursework. Vue.js app for booking after-school l
 | payment.js | sets up Stripe and pays for the cart |
 | session.js | keeps the sign-in token in the browser |
 | money.js | formats prices |
+| components/HeroScene.js | landing hero: particle canvas, 3D tilt and the live agent preview |
+| components/AgentDemo.js | the looping "agent at work" preview on the landing page |
+| components/HowItWorks.js | the three steps and the moving subject strip |
+| tilt.js | Vue directive (v-tilt) that tilts cards in 3D with the mouse |
 | style.css | v-cloak and the page/card transitions |
 
 ## Marked features
