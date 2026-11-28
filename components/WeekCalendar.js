@@ -43,11 +43,22 @@ export default {
     picksOn(day) {
       return this.plan.picks.filter(pick => pick.lesson.day == day);
     },
-    position(pick) {
+    start(pick) {
       let [hours, minutes] = pick.lesson.time.split(":").map(Number);
-      let top = ((hours - FIRST_HOUR) * 60 + minutes) / ((LAST_HOUR - FIRST_HOUR) * 60) * 100;
+      return hours * 60 + minutes;
+    },
+    position(pick, day) {
+      let top = (this.start(pick) - FIRST_HOUR * 60) / ((LAST_HOUR - FIRST_HOUR) * 60) * 100;
       let height = 60 / ((LAST_HOUR - FIRST_HOUR) * 60) * 100;
-      return { top: top + "%", height: height + "%" };
+      let sameTime = this.picksOn(day).filter(other => Math.abs(this.start(other) - this.start(pick)) < 60);
+      let lane = sameTime.indexOf(pick);
+      let width = 100 / sameTime.length;
+      return {
+        top: top + "%",
+        height: height + "%",
+        left: "calc(" + (lane * width) + "% + 2px)",
+        width: "calc(" + width + "% - 4px)"
+      };
     }
   },
   template: `
@@ -68,9 +79,9 @@ export default {
           </div>
           <div v-for="day in days" :key="day" class="relative h-80 rounded-xl bg-surface ring-1 ring-line">
             <div v-for="(hour, index) in hours" :key="hour" class="absolute inset-x-0 border-t border-line/70" :style="{ top: (index / hours.length * 100) + '%' }"></div>
-            <div v-for="pick in picksOn(day)" :key="pick.lesson._id + pick.child" data-test="calendar-block"
-              class="calendar-block absolute inset-x-1 overflow-hidden rounded-lg px-1.5 py-1 text-[11px] leading-tight shadow-md"
-              :class="colour(pick.child)" :style="position(pick)">
+            <div v-for="(pick, index) in picksOn(day)" :key="index + pick.lesson._id + pick.child" data-test="calendar-block"
+              class="calendar-block absolute overflow-hidden rounded-lg px-1.5 py-1 text-[11px] leading-tight shadow-md"
+              :class="colour(pick.child)" :style="position(pick, day)">
               <p class="font-semibold">{{ pick.lesson.topic }}</p>
               <p class="opacity-90">{{ pick.child }} · {{ pick.lesson.time }}</p>
             </div>

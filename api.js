@@ -1,4 +1,4 @@
-import { getToken } from "./session.js";
+import { getToken, clearToken } from "./session.js";
 
 const onLocalhost = location.hostname == "localhost" || location.hostname == "127.0.0.1";
 
@@ -8,8 +8,14 @@ export const SERVER_URL = onLocalhost
   ? (override || "http://localhost:5000")
   : "https://m01141362-backend.onrender.com";
 
+const PRIVATE = ["/auth/", "/me/", "/orders", "/agent/"];
+
 async function readResponse(response) {
   let data = await response.json().catch(() => ({}));
+  if (response.status == 401 && getToken()) {
+    clearToken();
+    window.dispatchEvent(new Event("signed-out"));
+  }
   if (!response.ok) {
     let error = new Error(data.error || "HTTP " + response.status);
     error.status = response.status;
@@ -18,20 +24,21 @@ async function readResponse(response) {
   return data;
 }
 
-function authHeaders() {
+function authHeaders(path) {
   let token = getToken();
-  return token ? { Authorization: "Bearer " + token } : {};
+  let needed = PRIVATE.some(prefix => path.startsWith(prefix));
+  return token && needed ? { Authorization: "Bearer " + token } : {};
 }
 
 export async function getJSON(path) {
-  let response = await fetch(SERVER_URL + path, { headers: authHeaders() });
+  let response = await fetch(SERVER_URL + path, { headers: authHeaders(path) });
   return readResponse(response);
 }
 
 export async function sendJSON(method, path, body) {
   let response = await fetch(SERVER_URL + path, {
     method: method,
-    headers: { "Content-Type": "application/json", ...authHeaders() },
+    headers: { "Content-Type": "application/json", ...authHeaders(path) },
     body: JSON.stringify(body)
   });
   return readResponse(response);
@@ -40,7 +47,7 @@ export async function sendJSON(method, path, body) {
 export async function readStream(path, body, onEvent, signal) {
   let response = await fetch(SERVER_URL + path, {
     method: "POST",
-    headers: { "Content-Type": "application/json", ...authHeaders() },
+    headers: { "Content-Type": "application/json", ...authHeaders(path) },
     body: JSON.stringify(body),
     signal: signal
   });

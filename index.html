@@ -52,7 +52,7 @@
       :busy="authBusy"
       :error="authError"
       :reason="authReason"
-      @close="authOpen = false"
+      @close="authOpen = false; pendingView = ''"
       @switch="authMode = $event; authError = ''"
       @submit="submitAuth"
     ></auth-modal>
@@ -143,6 +143,7 @@
               :lesson="lesson"
               :teacher="teacherName(lesson)"
               :enrolled="enrolments[lesson._id]"
+              :in-cart="inCart(lesson)"
               @add="addToCart"
               @find-similar="findSimilar"
             ></lesson-card>
@@ -202,6 +203,6 @@
     </footer>
   </div>
 
-  <script type="module" src="app.js?v=8"></script>
+  <script type="module" src="app.js?v=9"></script>
 </body>
 </html>

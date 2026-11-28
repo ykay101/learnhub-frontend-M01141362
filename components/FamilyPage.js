@@ -5,13 +5,15 @@ export default {
     return {
       phone: this.user.phone,
       homeArea: this.user.homeArea,
-      children: this.user.children.map(child => ({ ...child }))
+      nextId: this.user.children.length,
+      children: this.user.children.map((child, index) => ({ ...child, uid: index }))
     };
   },
   methods: {
     addChild() {
       if (this.children.length < 6) {
-        this.children.push({ name: "", age: "", interests: "" });
+        this.children.push({ name: "", age: "", interests: "", uid: this.nextId });
+        this.nextId++;
       }
     },
     removeChild(index) {
@@ -49,7 +51,7 @@ export default {
       <p v-if="children.length == 0" class="mt-4 rounded-2xl border border-dashed border-line bg-white p-6 text-center text-muted">No children saved yet.</p>
 
       <transition-group tag="div" name="card" class="mt-4 space-y-3">
-        <div v-for="(child, index) in children" :key="index" class="grid gap-3 rounded-2xl border border-line bg-white p-4 shadow-sm sm:grid-cols-[1fr_90px_1.4fr_auto] sm:items-end">
+        <div v-for="(child, index) in children" :key="child.uid" class="grid gap-3 rounded-2xl border border-line bg-white p-4 shadow-sm sm:grid-cols-[1fr_90px_1.4fr_auto] sm:items-end">
           <label class="block"><span class="text-xs font-medium text-muted">Name</span>
             <input :data-test="'child-name-' + index" v-model="child.name" type="text" class="mt-1 w-full rounded-xl border border-line bg-surface px-3 py-2.5 outline-none focus:border-indigo focus:bg-white"></label>
           <label class="block"><span class="text-xs font-medium text-muted">Age</span>

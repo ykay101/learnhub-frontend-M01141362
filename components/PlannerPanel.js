@@ -200,7 +200,7 @@ export default {
           <week-calendar v-if="!similarLesson && plan.picks.length" :plan="plan"></week-calendar>
 
           <div class="grid gap-4 sm:grid-cols-2">
-            <article v-for="pick in plan.picks" :key="pick.lesson._id + pick.child" data-test="plan-pick" class="flex gap-4 rounded-2xl border border-line bg-white p-4 shadow-sm">
+            <article v-for="(pick, index) in plan.picks" :key="index + pick.lesson._id" data-test="plan-pick" class="flex gap-4 rounded-2xl border border-line bg-white p-4 shadow-sm">
               <img :src="imageURL(pick.lesson.image)" :alt="pick.lesson.topic" class="h-20 w-24 shrink-0 rounded-xl object-cover">
               <div class="min-w-0 flex-1">
                 <p class="text-xs font-semibold tracking-wide text-muted uppercase"><template v-if="pick.child">{{ pick.child }}<template v-if="pick.age"> · {{ pick.age }}</template></template><template v-else>Alternative</template></p>

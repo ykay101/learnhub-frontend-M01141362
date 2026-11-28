@@ -18,7 +18,7 @@ const colours = {
 };
 
 export default {
-  props: ["lesson", "teacher", "enrolled"],
+  props: ["lesson", "teacher", "enrolled", "inCart"],
   emits: ["add", "find-similar"],
   computed: {
     chipClass() {
@@ -73,7 +73,7 @@ export default {
           >
             <i class="fa fa-plus"></i> Add to Cart
           </button>
-          <button v-if="lesson.space == 0" data-test="similar-btn" class="mt-2 w-full rounded-xl py-2 text-sm font-semibold text-indigo ring-1 ring-indigo/30 transition hover:bg-indigo-50" v-on:click="$emit('find-similar', lesson)">
+          <button v-if="lesson.space == 0 && !inCart" data-test="similar-btn" class="mt-2 w-full rounded-xl py-2 text-sm font-semibold text-indigo ring-1 ring-indigo/30 transition hover:bg-indigo-50" v-on:click="$emit('find-similar', lesson)">
             <i class="fa fa-magic mr-1"></i> Find me something similar
           </button>
         </div>

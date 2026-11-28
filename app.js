@@ -47,6 +47,7 @@ const app = createApp({
       paymentsReady: false,
       paidPaymentId: null,
       user: null,
+      checkingUser: false,
       authOpen: false,
       authMode: "login",
       authBusy: false,
@@ -71,6 +72,7 @@ const app = createApp({
     this.getTeachers();
     this.checkPayments();
     this.loadUser();
+    window.addEventListener("signed-out", this.onSignedOut);
   },
 
   watch: {
@@ -142,11 +144,29 @@ const app = createApp({
 
     async loadUser() {
       if (!getToken()) return;
+      this.checkingUser = true;
       try {
         let result = await getJSON("/auth/me");
         this.user = result.user;
       } catch (error) {
-        if (error.status == 401) clearToken();
+        this.user = null;
+      } finally {
+        this.checkingUser = false;
+      }
+      if (this.pendingView && !this.authOpen) {
+        let view = this.pendingView;
+        this.pendingView = "";
+        this.go(view, true);
+      }
+    },
+
+    onSignedOut() {
+      let needed = ["family", "bookings", "planner"].includes(this.view) ? this.view : "";
+      this.user = null;
+      this.bookings = [];
+      if (needed) {
+        this.view = "lessons";
+        this.openAuth("Your session has ended. Please sign in again.", needed);
       }
     },
 
@@ -167,6 +187,7 @@ const app = createApp({
         setToken(result.token);
         this.user = result.user;
         this.authOpen = false;
+        if (this.view == "cart") this.prefillOrder();
         if (this.pendingView) {
           this.go(this.pendingView, true);
           this.pendingView = "";
@@ -187,6 +208,8 @@ const app = createApp({
       clearToken();
       this.user = null;
       this.bookings = [];
+      this.order.name = "";
+      this.order.phone = "";
       if (this.view != "cart") {
         this.go("lessons");
       }
@@ -194,6 +217,11 @@ const app = createApp({
 
     go(view, keepSimilar) {
       if (["family", "bookings", "planner"].includes(view) && !this.user) {
+        if (!keepSimilar) this.similarLesson = null;
+        if (this.checkingUser) {
+          this.pendingView = view;
+          return;
+        }
         this.openAuth("Please sign in to continue.", view);
         return;
       }
@@ -225,6 +253,10 @@ const app = createApp({
         return;
       }
       this.go("planner", true);
+    },
+
+    inCart(lesson) {
+      return this.cart.filter(l => l._id == lesson._id).length;
     },
 
     addLessonsToCart(ids) {
