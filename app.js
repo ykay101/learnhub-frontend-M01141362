@@ -37,6 +37,7 @@ const app = createApp({
       orderWarning: "",
       submitting: false,
       paymentsReady: false,
+      paidPaymentId: null,
       receipt: null
     };
   },
@@ -124,6 +125,9 @@ const app = createApp({
       this.getLessons();
       if (this.teachers.length == 0) {
         this.getTeachers();
+      }
+      if (!this.paymentsReady) {
+        this.checkPayments();
       }
     },
 
@@ -273,15 +277,18 @@ const app = createApp({
         spaces: spaces
       };
 
-      let paymentId = null;
-      if (this.paymentsReady) {
+      let paymentId = this.paidPaymentId;
+      if (this.paymentsReady && !paymentId) {
         try {
           paymentId = await payForCart(lessonIDs, spaces);
+          this.paidPaymentId = paymentId;
         } catch (error) {
           this.orderError = error.message;
           this.submitting = false;
           return;
         }
+      }
+      if (paymentId) {
         newOrder.paymentId = paymentId;
       }
 
@@ -306,7 +313,7 @@ const app = createApp({
           this.orderWarning = "Your order was saved, but we couldn't update the available spaces. There's no need to order again.";
           this.clearCart();
         } else if (paymentId) {
-          this.orderError = "Your payment went through but we couldn't save the order. Please contact us with this reference: " + paymentId;
+          this.orderError = "Your payment went through but we couldn't save the order. Please press Checkout again to retry (you won't be charged twice). Reference: " + paymentId;
         } else {
           this.orderError = "Sorry, your order could not be submitted. Please try again.";
         }
@@ -316,6 +323,7 @@ const app = createApp({
     },
 
     clearCart() {
+      this.paidPaymentId = null;
       this.cart = [];
       this.order.name = "";
       this.order.phone = "";
