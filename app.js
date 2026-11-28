@@ -13,6 +13,9 @@ import FamilyPage from "./components/FamilyPage.js";
 import BookingsPage from "./components/BookingsPage.js";
 import PlannerPanel from "./components/PlannerPanel.js";
 import WeekCalendar from "./components/WeekCalendar.js";
+import HeroScene from "./components/HeroScene.js";
+import HowItWorks from "./components/HowItWorks.js";
+import tilt from "./tilt.js";
 
 const { createApp } = Vue;
 
@@ -113,6 +116,9 @@ const app = createApp({
         total = total + lesson.price;
       }
       return total;
+    },
+    venueCount() {
+      return new Set(this.lessons.map(lesson => lesson.location)).size;
     },
     canOpenCart() {
       return this.cart.length > 0 || this.view == "cart";
@@ -240,6 +246,11 @@ const app = createApp({
       if (!keepSimilar) this.similarLesson = null;
       if (view == "cart") this.prefillOrder();
       this.scrollToView();
+    },
+
+    scrollToLessons() {
+      let section = document.getElementById("lessons");
+      if (section) section.scrollIntoView({ behavior: "smooth" });
     },
 
     openPlanner() {
@@ -568,4 +579,7 @@ app.component("family-page", FamilyPage);
 app.component("bookings-page", BookingsPage);
 app.component("planner-panel", PlannerPanel);
 app.component("week-calendar", WeekCalendar);
+app.component("hero-scene", HeroScene);
+app.component("how-it-works", HowItWorks);
+app.directive("tilt", tilt);
 app.mount("#app");

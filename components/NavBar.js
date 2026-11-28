@@ -2,15 +2,15 @@ export default {
   props: ["sitename", "cartCount", "canOpenCart", "view", "user"],
   emits: ["toggle-cart", "go", "signin", "signout"],
   template: `
-    <nav class="sticky top-0 z-30 border-b border-white/10 bg-night/85 text-white backdrop-blur-md">
+    <nav class="sticky top-0 z-30 border-b border-white/10 bg-[#07061a]/75 text-white shadow-lg shadow-black/10 backdrop-blur-xl backdrop-saturate-150">
       <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <a href="#" data-test="nav-lessons" class="flex items-center gap-2" @click.prevent="$emit('go', 'lessons')">
-          <span class="grid h-9 w-9 place-items-center rounded-xl bg-brand font-display text-lg font-bold ring-1 ring-white/20">2</span>
+          <span class="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 via-violet-500 to-teal-400 font-display text-lg font-bold shadow-lg shadow-indigo-500/40 ring-1 ring-white/30">2</span>
           <span class="font-display text-xl font-semibold tracking-tight">{{ sitename }}</span>
         </a>
         <div class="flex items-center gap-2 sm:gap-3">
-        <button data-test="nav-planner" class="hidden items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-white/90 transition hover:bg-white/10 sm:inline-flex" @click="$emit('go', 'planner')">
-          <i class="fa fa-magic"></i> Plan my week
+        <button data-test="nav-planner" class="hidden items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3.5 py-2 text-sm font-semibold text-white/90 transition hover:border-violet-300/50 hover:bg-white/10 sm:inline-flex" @click="$emit('go', 'planner')">
+          <i class="fa fa-magic text-violet-300"></i> Plan my week
         </button>
         <account-menu :user="user" @signin="$emit('signin')" @go="$emit('go', $event)" @signout="$emit('signout')"></account-menu>
         <button

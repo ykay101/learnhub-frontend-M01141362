@@ -28,7 +28,7 @@
       .text-brand { background-image: linear-gradient(90deg, #4338ca, #0d9488); -webkit-background-clip: text; background-clip: text; color: transparent; }
     }
   </style>
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
   <script src="https://js.stripe.com/v3/"></script>
   <script src="https://unpkg.com/vue@3.5.45/dist/vue.global.prod.js"></script>
 </head>
@@ -57,42 +57,24 @@
       @submit="submitAuth"
     ></auth-modal>
 
-    <header v-if="view == 'lessons'" class="relative overflow-hidden bg-brand text-white">
-      <div aria-hidden="true" class="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-teal/40 blur-3xl"></div>
-      <div aria-hidden="true" class="pointer-events-none absolute -bottom-32 -left-20 h-96 w-96 rounded-full bg-accent/25 blur-3xl"></div>
-      <div class="relative mx-auto max-w-6xl px-4 py-16 sm:py-24">
-        <p class="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm font-medium ring-1 ring-white/20">
-          <i class="fa fa-map-marker"></i> After-school lessons across North London
-        </p>
-        <h1 class="max-w-3xl font-display text-4xl font-semibold leading-tight sm:text-6xl">
-          Plan your family's week in one sentence.
-        </h1>
-        <p class="mt-5 max-w-2xl text-lg text-white/80">
-          Coding, art, football, music and more for ages 5 to 15. Book a space in seconds, with small groups and friendly teachers.
-        </p>
-        <div class="mt-8 flex flex-wrap gap-3">
-          <button data-test="hero-plan" class="hero-glow rounded-full bg-accent px-6 py-3 font-semibold text-white shadow-lg shadow-accent/30 transition hover:-translate-y-0.5 hover:brightness-110" @click="openPlanner">
-            <i class="fa fa-magic mr-1"></i> Plan my week with AI
-          </button>
-          <a href="#lessons" class="rounded-full bg-white px-6 py-3 font-semibold text-night shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:shadow-xl">
-            Browse lessons <i class="fa fa-arrow-right ml-1"></i>
-          </a>
-        </div>
-        <dl class="mt-12 grid max-w-xl grid-cols-3 gap-6 text-sm">
-          <div><dt class="text-white/60">Weekly lessons</dt><dd class="font-display text-3xl font-semibold">{{ lessons.length || 16 }}</dd></div>
-          <div><dt class="text-white/60">Venues</dt><dd class="font-display text-3xl font-semibold">8</dd></div>
-          <div><dt class="text-white/60">Ages</dt><dd class="font-display text-3xl font-semibold">5–15</dd></div>
-        </dl>
-      </div>
-    </header>
+    <hero-scene
+      v-if="view == 'lessons'"
+      :lesson-count="lessons.length"
+      :venue-count="venueCount"
+      :signed-in="!!user"
+      @plan="openPlanner"
+      @browse="scrollToLessons"
+    ></hero-scene>
+    <how-it-works v-if="view == 'lessons'"></how-it-works>
 
     <main class="mx-auto max-w-6xl px-4 py-10">
       <transition name="page" mode="out-in">
         <section v-if="view == 'lessons'" key="lessons" id="lessons" class="scroll-mt-20">
           <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
             <div>
-              <h2 class="font-display text-3xl font-semibold">This week's lessons</h2>
-              <p class="mt-1 text-muted">Small groups, five spaces each. Pick a subject and add it to your cart.</p>
+              <p class="text-xs font-semibold tracking-[0.2em] text-indigo uppercase">Browse</p>
+              <h2 class="mt-1 font-display text-4xl font-semibold tracking-tight">This week's lessons</h2>
+              <p class="mt-2 text-muted">Small groups, five spaces each. Pick a subject, or let the planner pick for you.</p>
             </div>
           </div>
 
@@ -203,6 +185,6 @@
     </footer>
   </div>
 
-  <script type="module" src="app.js?v=9"></script>
+  <script type="module" src="app.js?v=10"></script>
 </body>
 </html>

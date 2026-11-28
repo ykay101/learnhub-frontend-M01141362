@@ -32,7 +32,7 @@ export default {
     }
   },
   template: `
-    <article data-test="lesson-card" class="group flex flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo/10">
+    <article data-test="lesson-card" v-tilt class="tilt-surface group relative flex flex-col overflow-hidden rounded-3xl border border-line bg-white shadow-sm hover:shadow-2xl hover:shadow-indigo-500/15">
       <div class="relative">
         <img :src="image" :alt="lesson.topic" class="h-36 w-full object-cover transition duration-500 group-hover:scale-105">
         <span class="absolute top-3 left-3 rounded-full bg-white/95 px-2.5 py-1 text-xs font-semibold text-ink shadow-sm">
