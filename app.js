@@ -11,6 +11,8 @@ import AuthModal from "./components/AuthModal.js";
 import AccountMenu from "./components/AccountMenu.js";
 import FamilyPage from "./components/FamilyPage.js";
 import BookingsPage from "./components/BookingsPage.js";
+import PlannerPanel from "./components/PlannerPanel.js";
+import WeekCalendar from "./components/WeekCalendar.js";
 
 const { createApp } = Vue;
 
@@ -57,6 +59,9 @@ const app = createApp({
       bookings: [],
       bookingsLoading: false,
       bookingsError: "",
+      similarLesson: null,
+      plannerNotice: "",
+      plannerKey: 0,
       receipt: null
     };
   },
@@ -163,7 +168,7 @@ const app = createApp({
         this.user = result.user;
         this.authOpen = false;
         if (this.pendingView) {
-          this.go(this.pendingView);
+          this.go(this.pendingView, true);
           this.pendingView = "";
         }
       } catch (error) {
@@ -187,7 +192,7 @@ const app = createApp({
       }
     },
 
-    go(view) {
+    go(view, keepSimilar) {
       if (["family", "bookings", "planner"].includes(view) && !this.user) {
         this.openAuth("Please sign in to continue.", view);
         return;
@@ -200,8 +205,44 @@ const app = createApp({
       this.familyMessage = "";
       this.familyError = "";
       if (view == "bookings") this.loadBookings();
+      if (view == "planner") {
+        this.plannerNotice = "";
+        this.plannerKey++;
+      }
+      if (!keepSimilar) this.similarLesson = null;
       if (view == "cart") this.prefillOrder();
       this.scrollToView();
+    },
+
+    openPlanner() {
+      this.go("planner");
+    },
+
+    findSimilar(lesson) {
+      this.similarLesson = lesson;
+      if (!this.user) {
+        this.openAuth("Sign in and I'll find the closest lessons with spaces.", "planner");
+        return;
+      }
+      this.go("planner", true);
+    },
+
+    addLessonsToCart(ids) {
+      let added = [];
+      let full = [];
+      for (let id of ids) {
+        let lesson = this.lessons.find(l => l._id == id);
+        if (lesson && lesson.space > 0) {
+          this.addToCart(lesson);
+          added.push(lesson.topic);
+        } else if (lesson) {
+          full.push(lesson.topic);
+        }
+      }
+      let parts = [];
+      if (added.length) parts.push("Added " + added.join(" and ") + " to your cart.");
+      if (full.length) parts.push(full.join(" and ") + " just filled up.");
+      this.plannerNotice = parts.join(" ");
     },
 
     prefillOrder() {
@@ -493,4 +534,6 @@ app.component("auth-modal", AuthModal);
 app.component("account-menu", AccountMenu);
 app.component("family-page", FamilyPage);
 app.component("bookings-page", BookingsPage);
+app.component("planner-panel", PlannerPanel);
+app.component("week-calendar", WeekCalendar);
 app.mount("#app");

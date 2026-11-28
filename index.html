@@ -28,7 +28,7 @@
       .text-brand { background-image: linear-gradient(90deg, #4338ca, #0d9488); -webkit-background-clip: text; background-clip: text; color: transparent; }
     }
   </style>
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
   <script src="https://js.stripe.com/v3/"></script>
   <script src="https://unpkg.com/vue@3.5.45/dist/vue.global.prod.js"></script>
 </head>
@@ -71,6 +71,9 @@
           Coding, art, football, music and more for ages 5 to 15. Book a space in seconds, with small groups and friendly teachers.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
+          <button data-test="hero-plan" class="hero-glow rounded-full bg-accent px-6 py-3 font-semibold text-white shadow-lg shadow-accent/30 transition hover:-translate-y-0.5 hover:brightness-110" @click="openPlanner">
+            <i class="fa fa-magic mr-1"></i> Plan my week with AI
+          </button>
           <a href="#lessons" class="rounded-full bg-white px-6 py-3 font-semibold text-night shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:shadow-xl">
             Browse lessons <i class="fa fa-arrow-right ml-1"></i>
           </a>
@@ -141,8 +144,21 @@
               :teacher="teacherName(lesson)"
               :enrolled="enrolments[lesson._id]"
               @add="addToCart"
+              @find-similar="findSimilar"
             ></lesson-card>
           </transition-group>
+        </section>
+
+        <section v-else-if="view == 'planner' && user" key="planner">
+          <planner-panel
+            :key="plannerKey + (similarLesson ? '-' + similarLesson._id : '')"
+            :user="user"
+            :similar-lesson="similarLesson"
+            :notice="plannerNotice"
+            @add-lessons="addLessonsToCart"
+            @edit-family="go('family')"
+            @browse="go('lessons')"
+          ></planner-panel>
         </section>
 
         <section v-else-if="view == 'family' && user" key="family">
@@ -186,6 +202,6 @@
     </footer>
   </div>
 
-  <script type="module" src="app.js?v=7"></script>
+  <script type="module" src="app.js?v=8"></script>
 </body>
 </html>
