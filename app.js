@@ -3,6 +3,8 @@ import NavBar from "./components/NavBar.js";
 import LessonFilters from "./components/LessonFilters.js";
 import LessonCard from "./components/LessonCard.js";
 import CartPage from "./components/CartPage.js";
+import CardForm from "./components/CardForm.js";
+import { setupPayments, payForCart } from "./payment.js";
 
 const { createApp } = Vue;
 
@@ -33,13 +35,16 @@ const app = createApp({
       orderMessage: "",
       orderError: "",
       orderWarning: "",
-      submitting: false
+      submitting: false,
+      paymentsReady: false,
+      receipt: null
     };
   },
 
   created() {
     this.getLessons();
     this.getTeachers();
+    this.checkPayments();
   },
 
   watch: {
@@ -107,6 +112,10 @@ const app = createApp({
       } finally {
         this.loading = false;
       }
+    },
+
+    async checkPayments() {
+      this.paymentsReady = await setupPayments();
     },
 
     retryLoad() {
@@ -243,6 +252,7 @@ const app = createApp({
       this.orderMessage = "";
       this.orderError = "";
       this.orderWarning = "";
+      this.receipt = null;
 
       let lessonIDs = [];
       let spaces = [];
@@ -263,9 +273,21 @@ const app = createApp({
         spaces: spaces
       };
 
+      let paymentId = null;
+      if (this.paymentsReady) {
+        try {
+          paymentId = await payForCart(lessonIDs, spaces);
+        } catch (error) {
+          this.orderError = error.message;
+          this.submitting = false;
+          return;
+        }
+        newOrder.paymentId = paymentId;
+      }
+
       let orderSaved = false;
       try {
-        await sendJSON("POST", "/orders", newOrder);
+        let saved = await sendJSON("POST", "/orders", newOrder);
         orderSaved = true;
 
         for (let id of lessonIDs) {
@@ -274,11 +296,17 @@ const app = createApp({
         }
 
         this.orderMessage = "Thank you " + this.order.name + ", your order has been submitted!";
+        if (paymentId) {
+          this.receipt = { amount: saved.amount, cardLast4: saved.cardLast4 };
+          this.orderMessage = this.orderMessage + " Payment of £" + saved.amount / 100 + " received.";
+        }
         this.clearCart();
       } catch (error) {
         if (orderSaved) {
           this.orderWarning = "Your order was saved, but we couldn't update the available spaces. There's no need to order again.";
           this.clearCart();
+        } else if (paymentId) {
+          this.orderError = "Your payment went through but we couldn't save the order. Please contact us with this reference: " + paymentId;
         } else {
           this.orderError = "Sorry, your order could not be submitted. Please try again.";
         }
@@ -300,6 +328,7 @@ const app = createApp({
       this.orderMessage = "";
       this.orderError = "";
       this.orderWarning = "";
+      this.receipt = null;
     }
   }
 });
@@ -308,4 +337,5 @@ app.component("nav-bar", NavBar);
 app.component("lesson-filters", LessonFilters);
 app.component("lesson-card", LessonCard);
 app.component("cart-page", CartPage);
+app.component("card-form", CardForm);
 app.mount("#app");

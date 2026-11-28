@@ -29,6 +29,7 @@
     }
   </style>
   <link rel="stylesheet" href="style.css?v=3">
+  <script src="https://js.stripe.com/v3/"></script>
   <script src="https://unpkg.com/vue@3.5.45/dist/vue.global.prod.js"></script>
 </head>
 <body class="bg-surface font-sans text-ink antialiased">
@@ -141,6 +142,8 @@
             :order-message="orderMessage"
             :order-error="orderError"
             :order-warning="orderWarning"
+            :payments-ready="paymentsReady"
+            :receipt="receipt"
             @add="addToCart"
             @remove="removeFromCart"
             @checkout="checkout"
@@ -158,6 +161,6 @@
     </footer>
   </div>
 
-  <script type="module" src="app.js?v=3"></script>
+  <script type="module" src="app.js?v=4"></script>
 </body>
 </html>

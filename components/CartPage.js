@@ -1,7 +1,7 @@
 import { imageURL } from "../api.js";
 
 export default {
-  props: ["items", "total", "order", "validName", "validPhone", "canCheckout", "submitting", "orderMessage", "orderError", "orderWarning"],
+  props: ["items", "total", "order", "validName", "validPhone", "canCheckout", "submitting", "orderMessage", "orderError", "orderWarning", "paymentsReady", "receipt"],
   emits: ["add", "remove", "checkout", "back"],
   methods: {
     imageURL
@@ -17,6 +17,11 @@ export default {
           <div>
             <p class="font-display text-xl font-semibold text-emerald-900">Order submitted</p>
             <p class="text-emerald-800">{{ orderMessage }}</p>
+            <p v-if="receipt" class="mt-3 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl bg-white px-3 py-2 text-sm text-emerald-900 ring-1 ring-emerald-200">
+              <span><i class="fa fa-credit-card mr-1"></i>Paid £{{ receipt.amount / 100 }}</span>
+              <span v-if="receipt.cardLast4">•••• {{ receipt.cardLast4 }}</span>
+              <span class="rounded-full bg-amber-100 px-2 text-xs font-semibold text-amber-800">Test mode</span>
+            </p>
           </div>
         </div>
 
@@ -82,15 +87,17 @@ export default {
           <span v-if="order.phone && !validPhone" data-test="phone-error" class="mt-1 block text-sm text-red-600">Please use numbers only.</span>
         </label>
 
+        <card-form v-if="paymentsReady && items.length > 0" :amount="total"></card-form>
+
         <button data-test="checkout-btn"
           class="mt-5 w-full rounded-xl bg-brand py-3 font-semibold text-white shadow-lg shadow-indigo/20 transition hover:brightness-110 disabled:cursor-not-allowed disabled:bg-none disabled:bg-line disabled:text-muted disabled:shadow-none"
           :disabled="!canCheckout"
           @click="$emit('checkout')">
-          <template v-if="submitting"><i class="fa fa-circle-o-notch fa-spin mr-1"></i> Placing order…</template>
-          <template v-else><i class="fa fa-lock mr-1"></i> Checkout</template>
+          <template v-if="submitting"><i class="fa fa-circle-o-notch fa-spin mr-1"></i> {{ paymentsReady ? 'Processing payment…' : 'Placing order…' }}</template>
+          <template v-else><i class="fa fa-lock mr-1"></i> Checkout<span v-if="paymentsReady && total > 0"> · £{{ total }}</span></template>
         </button>
 
-        <p v-if="orderError" class="mt-3 rounded-xl bg-red-50 p-3 text-sm text-red-700">{{ orderError }}</p>
+        <p v-if="orderError" data-test="order-error" class="mt-3 rounded-xl bg-red-50 p-3 text-sm text-red-700">{{ orderError }}</p>
       </aside>
     </div>
   `
