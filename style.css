@@ -312,3 +312,23 @@ button:disabled {
 .add-btn:not(:disabled):hover::after {
   transform: translateX(120%);
 }
+
+.modal-backdrop {
+  animation: fade-in 0.25s ease both;
+}
+
+.modal-pop {
+  animation: modal-pop 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+@keyframes modal-pop {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+}
+
+.tab-slider {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
